@@ -1,0 +1,35 @@
+language: python
+
+python:
+  - "3.6"
+
+node_js:
+  - "8.9.1"
+
+env:
+  global:
+    secure: tpsEKqE8LwhUHVOp2af2xW/BaNlNRZFAXfKsqNvpJF0N784pBDPtDZtbZjBYtnAeHtRQlL1rgN5TW/dVoHJh1yK695eaSwqKHHKgTzOHXz726MVCnpfGiFHQXtxmeNaQxF+dDfUafGmus7PEFIGiZe7JYol2KYmkbrfHwktLBNx+hS/QYnupBKZlNDtMj6ae/1TC971veT63RjXGLw6ZJw6L8b4kwrUrJuX0OmBgdiEtvizoSqd4B+sJN3WFEPI9YyL6elbbWsBcUWty+APbTBaI35ejKBw9S/2vb+QM46RF4b266Kg1yj+bT7UGmvXVyHM9+2kw7HWPNBgk0Z3bhkIfprixp9m5QrnrHmj9Rus11bg0cWXDTMNY4Ye+7AS8U8RkirdENixFpno6EeN+HXw4gMcq5Fhdtb3FJXblQY4/mhILjD/kPKq9Su+OiM9WNGqHHjbYB+c9uNdzO7aWsFs5OGP/cHPL1YWkM6BWgsCEfzQT3/Eq6Ybt8cz46kYdu8tIWDKKXk7RCw8iHv2wm90eaJt2f82YpqchUzw0C4oSIbMjlkG7qcrxnEcXO6IskvSzi36Eg9betesee7rreK7Ql75rBV0X0G8eELq31o+kAAGb86KgzGqrl8+66hrxYfpFqHf2wSfY34ORu7Ssr1+FtweUu0QKFqjyghzs+Tg=
+
+before_install:
+  - export TZ=Asia/Taipei
+
+install:
+  - npm install
+
+script:
+  # Generate raw data
+  - npm run parser
+  # Unit testing
+  - npm run test
+  # Set Git config
+  - git config --global user.name "$GIT_NAME"
+  - git config --global user.email "$GIT_EMAIL"
+  - git config --global push.default simple
+  - git clone --depth 1 --branch gh-pages https://$GH_TOKEN@github.com/Panepo/PileBunker build
+  # Generate static pages
+  - npm run travis
+  - cd build
+  - git add -A .
+  - MESSAGE=`date +\ %Y-%m-%d\ %H:%M:%S`
+  - git commit -m "Travis CI auto deploy:$MESSAGE"
+  - git push --quiet
