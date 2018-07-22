@@ -17,5 +17,5 @@ render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('poliwag')
+  document.getElementById('Yayoi')
 )

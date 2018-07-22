@@ -18,10 +18,6 @@
           flex-shrink: 0;
 }
 
-.demo-header .mdl-layout__header-row {
-  padding-left: 40px;
-}
-
 .demo-container {
   max-width: 1600px;
   width: calc(100% - 16px);
