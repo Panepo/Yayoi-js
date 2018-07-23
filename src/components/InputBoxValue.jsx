@@ -6,6 +6,7 @@ export default class InputBoxValue extends Component {
     this.state = {
       text: this.props.defaultValue
     }
+    this.handleInput = this.handleInput.bind(this)
   }
 
   handleInput(event) {
@@ -36,7 +37,7 @@ export default class InputBoxValue extends Component {
           type="text"
           pattern="-?[0-9]*(\.[0-9]+)?"
           id={modelId}
-          onChange={this.handleInput.bind(this)}
+          onChange={this.handleInput}
           value={this.state.text}
         />
         <label className={classLab} htmlFor={modelId}>
