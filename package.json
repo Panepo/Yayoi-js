@@ -23,6 +23,7 @@
     "url": "git+https://github.com/Panepo/Yayoi-js.git"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^0.12.3",
     "babel-polyfill": "^6.7.4",
     "react": "^0.14.8",
     "react-dom": "^0.14.8",

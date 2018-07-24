@@ -14,6 +14,7 @@ webpackConfig = {
       'redux'
       'react-redux'
       'redux-thunk'
+      '@tensorflow/tfjs'
     ]
   }
   output: {

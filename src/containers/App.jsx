@@ -12,7 +12,7 @@ export default class App extends Component {
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
           <Header />
           <Drawer />
-          <div className="demo-ribbon" />
+          <div className="layout-ribbon" />
           <Content />
           <Footer />
         </div>

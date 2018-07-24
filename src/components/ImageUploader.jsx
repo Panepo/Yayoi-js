@@ -9,24 +9,30 @@ export default class ImageUploader extends Component {
   }
 
   handleChange(event) {
-    if (event.target.files[0] != null) {
-      document
-        .getElementById('imageUploader_text_div')
-        .classList.add('is-focused')
+    const { uploaderID, propFunc } = this.props
+    let textId = uploaderID + '_imageUploader_text_div'
 
+    if (event.target.files[0] != null) {
+      document.getElementById(textId).classList.add('is-focused')
+      propFunc(true)
       this.setState({
         file: URL.createObjectURL(event.target.files[0]),
         text: event.target.files[0].name
       })
     } else {
-      document
-        .getElementById('imageUploader_text_div')
-        .classList.remove('is-focused')
+      document.getElementById(textId).classList.remove('is-focused')
+      propFunc(false)
+      this.setState({
+        file: null,
+        text: ''
+      })
     }
   }
 
   render() {
-    const { classes, displayText } = this.props
+    const { uploaderID, classes, displayText, widthMaximum } = this.props
+    let textId = uploaderID + '_imageUploader_text_div'
+    let imgId = uploaderID + '_imageUploader_img'
 
     return (
       <div>
@@ -41,7 +47,7 @@ export default class ImageUploader extends Component {
           </label>
         </div>
         <div
-          id="imageUploader_text_div"
+          id={textId}
           className="mdl-textfield mdl-js-textfield textfield-demo">
           <input
             className="imageUploader_text mdl-textfield__input"
@@ -58,7 +64,7 @@ export default class ImageUploader extends Component {
         </div>
         <div>
           <p className="imageUploader_image">
-            <img src={this.state.file} width="250" />
+            <img id={imgId} src={this.state.file} width={widthMaximum} />
           </p>
         </div>
       </div>
@@ -67,12 +73,17 @@ export default class ImageUploader extends Component {
 }
 
 ImageUploader.propTypes = {
+  uploaderID: PropTypes.string,
   classes: PropTypes.string,
-  displayText: PropTypes.string
+  displayText: PropTypes.string,
+  widthMaximum: PropTypes.number,
+  propFunc: PropTypes.func
 }
 
 ImageUploader.defaultProps = {
+  uploaderID: 'ImageUploader',
   classes:
     'imageUploader_Button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary',
-  displayText: 'Select Image'
+  displayText: 'Select Image',
+  widthMaximum: 400
 }

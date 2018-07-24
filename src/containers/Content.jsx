@@ -1,19 +1,51 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { layoutContent } from '../actions'
 import ImageUploader from '../components/ImageUploader'
 import '../../css/Content.css'
 
-export default class Content extends Component {
+class Content extends Component {
+  generateOutput() {
+    const { contentDisplay } = this.props
+    if (contentDisplay) {
+      return (
+        <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col" />
+      )
+    }
+  }
+
   render() {
+    const { layoutContent } = this.props
     return (
-      <main className="demo-main mdl-layout__content">
-        <div className="demo-container mdl-grid">
+      <main className="layout-main mdl-layout__content">
+        <div className="layout-container mdl-grid">
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone" />
-          <div className="content demo-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--3-col">
-            <ImageUploader />
+          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--4-col">
+            <ImageUploader widthMaximum={400} propFunc={layoutContent} />
           </div>
-          <div className="content demo-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col" />
+          {this.generateOutput()}
         </div>
       </main>
     )
   }
 }
+
+Content.propTypes = {
+  layoutContent: PropTypes.func.isRequired,
+  contentDisplay: PropTypes.bool.isRequired
+}
+
+const mapStateToProps = function mapStateToProps(state) {
+  return {
+    contentDisplay: state.reducerLayout.contentDisplay
+  }
+}
+
+const mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    layoutContent: bindActionCreators(layoutContent, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Content)
