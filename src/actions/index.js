@@ -1,8 +1,8 @@
 import * as types from '../constants/ConstActionTypes'
 
-export function layoutContent(modelId, display) {
+export function imageUpload(modelId, display) {
   return {
-    type: types.LAYOUT_CONTENT,
+    type: types.IMAGE_UPLOAD,
     modelId,
     display
   }

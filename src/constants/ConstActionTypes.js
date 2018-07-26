@@ -1,1 +1,1 @@
-export const LAYOUT_CONTENT = 'LAYOUT_CONTENT'
+export const IMAGE_UPLOAD = 'IMAGE_UPLOAD'
