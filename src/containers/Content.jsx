@@ -1,16 +1,19 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { layoutContent } from '../actions'
 import ImageUploader from '../components/ImageUploader'
-import '../../css/Content.css'
+import './Content.css'
 
 class Content extends Component {
   generateOutput() {
     const { contentDisplay } = this.props
     if (contentDisplay) {
       return (
-        <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col" />
+        <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col">
+          <srcnn />
+        </div>
       )
     }
   }
@@ -48,4 +51,7 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Content)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Content)

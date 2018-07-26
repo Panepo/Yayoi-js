@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { listLink } from '../constants/ConstLink'
-import '../../css/Header.css'
+import './Header.css'
 
 export default class Header extends Component {
   generateLink() {
@@ -9,7 +9,8 @@ export default class Header extends Component {
       let linkTemp = (
         <a
           className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-          href={listLink[i].link}>
+          href={listLink[i].link}
+        >
           {listLink[i].text}
         </a>
       )

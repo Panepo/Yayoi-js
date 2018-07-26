@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import '../../css/ImageUploader.css'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import './ImageUploader.css'
 
 export default class ImageUploader extends Component {
   constructor(props) {
@@ -14,14 +15,14 @@ export default class ImageUploader extends Component {
 
     if (event.target.files[0] != null) {
       document.getElementById(textId).classList.add('is-focused')
-      propFunc(true)
+      propFunc(uploaderID, true)
       this.setState({
         file: URL.createObjectURL(event.target.files[0]),
         text: event.target.files[0].name
       })
     } else {
       document.getElementById(textId).classList.remove('is-focused')
-      propFunc(false)
+      propFunc(uploaderID, false)
       this.setState({
         file: null,
         text: ''
@@ -46,9 +47,7 @@ export default class ImageUploader extends Component {
             />
           </label>
         </div>
-        <div
-          id={textId}
-          className="mdl-textfield mdl-js-textfield textfield-demo">
+        <div id={textId} className="mdl-textfield mdl-js-textfield">
           <input
             className="imageUploader_text mdl-textfield__input"
             type="text"
