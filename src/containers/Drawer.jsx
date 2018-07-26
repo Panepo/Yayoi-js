@@ -6,8 +6,12 @@ export default class Drawer extends Component {
   generateLink() {
     const linkOut = []
     for (let i = 0; i < listDrawer.length; i += 1) {
+      let linkKey = 'drawer-link' + i.toString()
       let linkTemp = (
-        <a className="mdl-navigation__link" href={listDrawer[i].link}>
+        <a
+          className="mdl-navigation__link"
+          key={linkKey}
+          href={listDrawer[i].link}>
           {listDrawer[i].text}
         </a>
       )

@@ -12,7 +12,7 @@ class Content extends Component {
     if (contentDisplay) {
       return (
         <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col">
-          <srcnn />
+          FQ
         </div>
       )
     }

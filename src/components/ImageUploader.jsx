@@ -32,6 +32,7 @@ export default class ImageUploader extends Component {
 
   render() {
     const { uploaderID, classes, displayText, widthMaximum } = this.props
+    const { text } = this.state
     let textId = uploaderID + '_imageUploader_text_div'
     let imgId = uploaderID + '_imageUploader_img'
 
@@ -63,7 +64,12 @@ export default class ImageUploader extends Component {
         </div>
         <div>
           <p className="imageUploader_image">
-            <img id={imgId} src={this.state.file} width={widthMaximum} />
+            <img
+              id={imgId}
+              src={this.state.file}
+              width={widthMaximum}
+              alt={text}
+            />
           </p>
         </div>
       </div>
