@@ -12,10 +12,11 @@ export default class ImageUploader extends Component {
   handleChange(event) {
     const { uploaderID, propFunc } = this.props
     let textId = uploaderID + '_imageUploader_text_div'
+    let imgId = uploaderID + '_imageUploader_img'
 
     if (event.target.files[0] != null) {
       document.getElementById(textId).classList.add('is-focused')
-      propFunc(uploaderID, true)
+      propFunc(imgId, true)
       this.setState({
         file: URL.createObjectURL(event.target.files[0]),
         text: event.target.files[0].name
@@ -31,16 +32,15 @@ export default class ImageUploader extends Component {
   }
 
   render() {
-    const { uploaderID, classes, displayText, widthMaximum } = this.props
-    const { text } = this.state
+    const { uploaderID, uploaderClass, buttonText, imageWidth } = this.props
     let textId = uploaderID + '_imageUploader_text_div'
     let imgId = uploaderID + '_imageUploader_img'
 
     return (
       <div>
         <div className="imageUploader">
-          <label className={classes}>
-            {displayText}
+          <label className={uploaderClass}>
+            {buttonText}
             <input
               className="imageUploader_none"
               type="file"
@@ -67,8 +67,8 @@ export default class ImageUploader extends Component {
             <img
               id={imgId}
               src={this.state.file}
-              width={widthMaximum}
-              alt={text}
+              width={imageWidth}
+              alt={this.state.text}
             />
           </p>
         </div>
@@ -79,16 +79,16 @@ export default class ImageUploader extends Component {
 
 ImageUploader.propTypes = {
   uploaderID: PropTypes.string,
-  classes: PropTypes.string,
-  displayText: PropTypes.string,
-  widthMaximum: PropTypes.number,
+  uploaderClass: PropTypes.string,
+  buttonText: PropTypes.string,
+  imageWidth: PropTypes.number,
   propFunc: PropTypes.func
 }
 
 ImageUploader.defaultProps = {
   uploaderID: 'ImageUploader',
-  classes:
+  uploaderClass:
     'imageUploader_Button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary',
-  displayText: 'Select Image',
-  widthMaximum: 400
+  buttonText: 'Select Image',
+  imageWidth: 400
 }

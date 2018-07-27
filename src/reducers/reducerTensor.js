@@ -3,7 +3,7 @@ import * as tf from '@tensorflow/tfjs'
 
 const initialState = {
   inputId: '',
-  outputImg: null
+  outputId: 'content_drawer'
 }
 
 const modelPath = './model/model.json'
@@ -33,16 +33,19 @@ const predict = async imgId => {
   })
 }
 
-export default function reducerTensor(state = initialState, action) {
-  let imgId
+const draw = (inputId, outputId) => {
+  let c = document.getElementById(outputId)
+  let ctx = c.getContext('2d')
+  let img = document.getElementById(inputId)
+  ctx.drawImage(img, 0, 0)
+}
 
+export default function reducerTensor(state = initialState, action) {
   switch (action.type) {
     case IMAGE_UPLOAD:
-      imgId = action.modelId + '_imageUploader_img'
-
+      draw(action.modelId, state.outputId)
       return Object.assign({}, state, {
-        inputId: action.modelId,
-        outputImg: predict(imgId)
+        inputId: action.modelId
       })
     default:
       loadModel()
