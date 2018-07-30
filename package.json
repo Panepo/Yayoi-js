@@ -8,6 +8,14 @@
     "type": "git",
     "url": "git+https://github.com/Panepo/Yayoi-js.git"
   },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "lint": "eslint ./src/",
+    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\" --write \"src/**/*.jsx\""
+  },
   "dependencies": {
     "@tensorflow/tfjs": "^0.12.3",
     "@tensorflow/tfjs-converter": "^0.5.4",
@@ -21,14 +29,6 @@
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "lint": "eslint ./src/",
-    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\" --write \"src/**/*.jsx\""
   },
   "devDependencies": {
     "eslint": "^5.2.0",

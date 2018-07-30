@@ -16,24 +16,26 @@ export default class ModelSRCNN extends Component {
   }
 
   componentDidMount() {
-    this.loadModel()
+    this.modelLoad()
     setTimeout(() => this.setState({ isLoading: false }), 5000)
   }
 
-  loadModel = async () => {
-    const { modelPath } = this.props
-    this.model = await tf.loadModel(modelPath)
-    this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
+  componentDidUpdate() {
+    const canvas = this.refs.outputCanvas
+    const ctx = canvas.getContext('2d')
+    const image = this.refs.inputImage
+
+    image.onload = () => {
+      ctx.drawImage(image, 0, 0)
+    }
   }
 
   handleUpload(event) {
     const { uploaderID } = this.props
     let textId = uploaderID + '_imageUploader_text_div'
-    let imgId = uploaderID + '_imageUploader_img'
 
     if (event.target.files[0] != null) {
       document.getElementById(textId).classList.add('is-focused')
-      this.canvasDraw(imgId, 'content_drawer')
       this.setState({
         file: URL.createObjectURL(event.target.files[0]),
         text: event.target.files[0].name,
@@ -49,29 +51,23 @@ export default class ModelSRCNN extends Component {
     }
   }
 
-  canvasDraw = (inputId, outputId) => {
-    let canvas = document.getElementById(outputId)
-    let ctx = canvas.getContext('2d')
-    // Create gradient
-    let grd = ctx.createLinearGradient(0, 0, 200, 0)
-    grd.addColorStop(0, 'red')
-    grd.addColorStop(1, 'white')
-
-    // Fill with gradient
-    ctx.fillStyle = grd
-    ctx.fillRect(10, 10, 150, 80)
+  modelLoad = async () => {
+    const { modelPath } = this.props
+    this.model = await tf.loadModel(modelPath)
+    this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
   }
 
-  predict = async imageData => {
+  modelPredict = async () => {
     await tf.tidy(() => {
-      const img = tf.fromPixels(imageData).toFloat()
+      const image = this.refs.inputImage
+      const img = tf.fromPixels(image).toFloat()
       const offset = tf.scalar(255)
 
       const normalized = img.div(offset)
       const batched = normalized.reshape([1, 32, 32, 1])
       const result = this.model.predict(batched)
 
-      const denormalized = result.mul(offset)
+      console.log(result)
     })
   }
 
@@ -85,7 +81,6 @@ export default class ModelSRCNN extends Component {
       canvasHeight
     } = this.props
     let textId = uploaderID + '_imageUploader_text_div'
-    let imgId = uploaderID + '_imageUploader_img'
 
     let canvasClass = ''
     if (this.state.contentDisplay) {
@@ -137,7 +132,7 @@ export default class ModelSRCNN extends Component {
             <div>
               <p className="imageUploader_image">
                 <img
-                  id={imgId}
+                  ref="inputImage"
                   src={this.state.file}
                   width={imageWidth}
                   alt={this.state.text}
@@ -146,7 +141,11 @@ export default class ModelSRCNN extends Component {
             </div>
           </div>
           <div className={canvasClass}>
-            <canvas id="content_drawer" width={canvasWidth} height={canvasHeight} />
+            <canvas
+              ref="outputCanvas"
+              width={canvasWidth}
+              height={canvasHeight}
+            />
           </div>
         </div>
       )
