@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import * as tf from '@tensorflow/tfjs'
+import { checkHW } from './ModelSRCNN.util'
 import './ModelSRCNN.css'
 
 export default class ModelSRCNN extends Component {
@@ -11,11 +12,13 @@ export default class ModelSRCNN extends Component {
       file: null,
       text: '',
       contentDisplay: false,
-      isLoading: false,
+      isLoading: true,
       imageWidth: 100,
       imageHeight: 100,
       canvasWidth: 200,
-      canvasHeight: 200
+      canvasHeight: 200,
+      maxWidth: 200,
+      maxHeight: 200
     }
     this.handleUpload = this.handleUpload.bind(this)
   }
@@ -52,14 +55,23 @@ export default class ModelSRCNN extends Component {
     const image = ReactDOM.findDOMNode(this.refs.inputImage)
 
     image.onload = () => {
+      let imgWidth
+      let imgHeight
+      ;[imgWidth, imgHeight] = checkHW(
+        image.naturalWidth,
+        image.naturalHeight,
+        this.state.maxWidth,
+        this.state.maxHeight
+      )
+
       this.setState({
-        imageWidth: image.naturalWidth,
-        imageHeight: image.naturalHeight,
-        canvasWidth: image.naturalWidth * 2,
-        canvasHeight: image.naturalHeight * 2
+        imageWidth: imgWidth,
+        imageHeight: imgHeight,
+        canvasWidth: imgWidth * 4,
+        canvasHeight: imgHeight * 4
       })
       ctxi.clearRect(0, 0, this.state.imageWidth, this.state.imageHeight)
-      ctxi.drawImage(image, 0, 0)
+      ctxi.drawImage(image, 0, 0, this.state.imageWidth, this.state.imageHeight)
 
       this.modelPredict(canvasi)
     }
@@ -71,21 +83,23 @@ export default class ModelSRCNN extends Component {
     this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
   }
 
-  modelPredict = input => {
+  modelPredict = async input => {
     const canvaso = this.refs.outputCanvas
     const ctxo = canvaso.getContext('2d')
     ctxo.clearRect(0, 0, this.state.canvasWidth, this.state.canvasHeight)
 
-    const imageData = tf
-      .fromPixels(input)
-      .toFloat()
-      .div(tf.scalar(255))
-    const imageScale = tf.image.resizeBilinear(
-      imageData,
-      [this.state.canvasWidth, this.state.canvasHeight],
-      false
-    )
-    tf.toPixels(imageScale, canvaso)
+    const imagePredict = tf.tidy(() => {
+      const imageData = tf
+        .fromPixels(input)
+        .toFloat()
+        .div(tf.scalar(255))
+      return tf.image.resizeBilinear(
+        imageData,
+        [this.state.canvasWidth, this.state.canvasHeight],
+        false
+      )
+    })
+    tf.toPixels(imagePredict, canvaso)
   }
 
   render() {
@@ -94,7 +108,7 @@ export default class ModelSRCNN extends Component {
     let canvasClass = ''
     if (this.state.contentDisplay) {
       canvasClass =
-        'layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col'
+        'layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--7-col'
     } else {
       canvasClass = 'canvas-none'
     }
@@ -113,7 +127,7 @@ export default class ModelSRCNN extends Component {
       return (
         <div className="mdl-grid">
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone" />
-          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--4-col">
+          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--3-col">
             <div className="imageUploader">
               <label className={uploaderClass}>
                 {buttonText}
