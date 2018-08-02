@@ -4,6 +4,7 @@
   "description": "Image super-resolution using deep convolutional neural network (CNN)",
   "private": true,
   "author": "Panepo <panepo@github.io>",
+  "homepage": "https://panepo.github.io/Yayoi-js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Panepo/Yayoi-js.git"
@@ -14,7 +15,9 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint ./src/",
-    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\" --write \"src/**/*.jsx\""
+    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\" --write \"src/**/*.jsx\"",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^0.12.3",
@@ -45,6 +48,7 @@
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-react": "^7.10.0",
     "eslint-plugin-standard": "^3.1.0",
+    "gh-pages": "^1.2.0",
     "prettier": "^1.13.7"
   }
 }
