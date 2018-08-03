@@ -11,7 +11,8 @@ export default class Header extends Component {
         <a
           className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
           key={linkKey}
-          href={listLink[i].link}>
+          href={listLink[i].link}
+        >
           {listLink[i].text}
         </a>
       )
