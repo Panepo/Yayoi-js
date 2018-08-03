@@ -16,7 +16,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint ./src/",
     "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.{js,jsx,json,css}\"",
-    "precommit": "lint-staged && yarn build-css",
+    "precommit": "lint-staged",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "yarn build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
     "predeploy": "yarn build",
