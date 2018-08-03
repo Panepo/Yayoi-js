@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
 import * as tf from '@tensorflow/tfjs'
 import { checkHW, rgba2ycbcr, ycbcr2rgb } from './ModelSRCNN.util'
-import * as modelConfig from '../constants/ConstSRCNN'
+import * as modelConfig from './ModelSRCNN.config'
 import './ModelSRCNN.css'
 
 export default class ModelSRCNN extends Component {
@@ -81,9 +80,7 @@ export default class ModelSRCNN extends Component {
 
   modelLoad = async () => {
     this.model = await tf.loadModel(modelConfig.modelPath)
-    this.model
-      .predict(tf.zeros([1, modelConfig.inputShape, modelConfig.inputShape, 1]))
-      .dispose()
+    this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
   }
 
   modelPredict = async (input, output) => {
@@ -105,14 +102,22 @@ export default class ModelSRCNN extends Component {
         [this.state.canvasWidth, this.state.canvasHeight],
         false
       )
-      return imageScale
+      const batched = imageScale.reshape([
+        1,
+        modelConfig.inputShape,
+        modelConfig.inputShape,
+        1
+      ])
+      const predict = this.model
+        .predict(batched)
+        .mul(tf.scalar(255))
+        .toInt()
+      return predict
     })
     tf.toPixels(imagePredict, output)
   }
 
   render() {
-    const { uploaderClass, buttonText } = this.props
-
     let canvasClass = ''
     if (this.state.contentDisplay) {
       canvasClass =
@@ -137,8 +142,8 @@ export default class ModelSRCNN extends Component {
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone" />
           <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--3-col">
             <div className="imageUploader">
-              <label className={uploaderClass}>
-                {buttonText}
+              <label className="imageUploader_Button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary">
+                Select Image
                 <input
                   className="imageUploader_none"
                   type="file"
@@ -197,15 +202,4 @@ export default class ModelSRCNN extends Component {
       )
     }
   }
-}
-
-ModelSRCNN.propTypes = {
-  uploaderClass: PropTypes.string,
-  buttonText: PropTypes.string
-}
-
-ModelSRCNN.defaultProps = {
-  uploaderClass:
-    'imageUploader_Button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary',
-  buttonText: 'Select Image'
 }
