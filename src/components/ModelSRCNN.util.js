@@ -1,3 +1,8 @@
+import * as tf from '@tensorflow/tfjs'
+
+// ==========================================================================
+// Image size related functions
+// ==========================================================================
 export const checkHW = (width, height, maxWidth, maxHeight) => {
   if (width > height) {
     if (width > maxWidth) {
@@ -10,6 +15,10 @@ export const checkHW = (width, height, maxWidth, maxHeight) => {
   }
   return [width, height]
 }
+
+// ==========================================================================
+// Image transformation related functions
+// ==========================================================================
 
 export const rgba2ycbcr = (input, output) => {
   const ctxi = input.getContext('2d')
@@ -60,4 +69,52 @@ export const rgba2gray = (input, output) => {
     data[i + 2] = avg // blue
   }
   ctxo.putImageData(imageData, 0, 0)
+}
+
+// ==========================================================================
+// Image channel related functions
+// ==========================================================================
+
+export const splitY = (input, output) => {
+  const ctxi = input.getContext('2d')
+  const ctxo = output.getContext('2d')
+  const imageData = ctxi.getImageData(0, 0, input.width, input.height)
+  const data = imageData.data
+
+  for (let i = 0; i < data.length; i += 4) {
+    data[i + 1] = 0
+    data[i + 2] = 0
+  }
+  ctxo.putImageData(imageData, 0, 0)
+}
+
+export const mergeY = (input, inputY, output) => {
+  const ctxi = input.getContext('2d')
+  const imgi = ctxi.getImageData(0, 0, input.width, input.height)
+  const datai = imgi.data
+  const ctxy = inputY.getContext('2d')
+  const imgy = ctxy.getImageData(0, 0, input.width, input.height)
+  const datay = imgy.data
+
+  const ctxo = output.getContext('2d')
+
+  for (let i = 0; i < datai.length; i += 4) {
+    datai[i] = datay[i]
+  }
+  ctxo.putImageData(datai, 0, 0)
+}
+
+// ==========================================================================
+// Image size related functions
+// ==========================================================================
+
+export const imageResize = (input, output, width, height) => {
+  const imageScale = tf.tidy(() => {
+    const imageData = tf
+      .fromPixels(input)
+      .toFloat()
+      .div(tf.scalar(255))
+    return tf.image.resizeBilinear(imageData, [width, height], false)
+  })
+  tf.toPixels(imageScale, output)
 }

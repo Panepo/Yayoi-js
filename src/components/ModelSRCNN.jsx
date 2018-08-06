@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import * as tf from '@tensorflow/tfjs'
-import { checkHW, rgba2ycbcr, ycbcr2rgb } from './ModelSRCNN.util'
+import * as util from './ModelSRCNN.util'
 import * as modelConfig from './ModelSRCNN.config'
 import './ModelSRCNN.css'
 
@@ -58,7 +58,7 @@ export default class ModelSRCNN extends Component {
     image.onload = () => {
       let imgWidth
       let imgHeight
-      ;[imgWidth, imgHeight] = checkHW(
+      ;[imgWidth, imgHeight] = util.checkHW(
         image.naturalWidth,
         image.naturalHeight,
         this.state.maxWidth,
@@ -86,35 +86,45 @@ export default class ModelSRCNN extends Component {
   modelPredict = async (input, output) => {
     const canvast = this.refs.tempCanvas
     const ctxt = canvast.getContext('2d')
-    ctxt.clearRect(0, 0, this.state.imageWidth, this.state.imageHeight)
+    ctxt.clearRect(0, 0, this.state.canvasWidth, this.state.canvasHeight)
+    const canvast2 = this.refs.tempCanvas2
+    const ctxt2 = canvast2.getContext('2d')
+    ctxt2.clearRect(0, 0, this.state.canvasWidth, this.state.canvasHeight)
+    const canvast3 = this.refs.tempCanvas3
+    const ctxt3 = canvast3.getContext('2d')
+    ctxt3.clearRect(0, 0, this.state.canvasWidth, this.state.canvasHeight)
     const ctxo = output.getContext('2d')
     ctxo.clearRect(0, 0, this.state.canvasWidth, this.state.canvasHeight)
-    rgba2ycbcr(input, canvast)
-    ycbcr2rgb(canvast, canvast)
 
-    const imagePredict = tf.tidy(() => {
+    util.imageResize(
+      input,
+      output,
+      this.state.canvasWidth,
+      this.state.canvasHeight
+    )
+    // util.rgba2ycbcr(canvast, output)
+    // util.splitY(canvast, canvast2)
+
+    /* const imagePredict = tf.tidy(() => {
       const imageData = tf
-        .fromPixels(canvast)
+        .fromPixels(canvast2, 1)
         .toFloat()
         .div(tf.scalar(255))
-      const imageScale = tf.image.resizeBilinear(
-        imageData,
-        [this.state.canvasWidth, this.state.canvasHeight],
-        false
-      )
-      const batched = imageScale.reshape([
+      const batched = imageData.reshape([
         1,
-        modelConfig.inputShape,
-        modelConfig.inputShape,
+        this.state.canvasWidth,
+        this.state.canvasHeight,
         1
       ])
       const predict = this.model
         .predict(batched)
         .mul(tf.scalar(255))
         .toInt()
-      return predict
+      return imageData
     })
-    tf.toPixels(imagePredict, output)
+    tf.toPixels(imagePredict, canvast3) */
+    // util.mergeY(canvast, canvast3, output)
+    // util.ycbcr2rgb(canvast2, output)
   }
 
   render() {
@@ -186,8 +196,18 @@ export default class ModelSRCNN extends Component {
             <div className="canvas-none">
               <canvas
                 ref="tempCanvas"
-                width={this.state.imageWidth}
-                height={this.state.imageHeight}
+                width={this.state.canvasWidth}
+                height={this.state.canvasHeight}
+              />
+              <canvas
+                ref="tempCanvas2"
+                width={this.state.canvasWidth}
+                height={this.state.canvasHeight}
+              />
+              <canvas
+                ref="tempCanvas3"
+                width={this.state.canvasWidth}
+                height={this.state.canvasHeight}
               />
             </div>
           </div>
