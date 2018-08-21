@@ -1,16 +1,19 @@
-import { IMAGE_UPLOAD } from '../constants/ConstActionTypes'
+import { IFRMAE_SWITCH } from '../constants/ConstActionTypes'
 
 const initialState = {
-  contentDisplay: false
+  iframeDisplay: false
 }
 
-export default function reducerTensorFlow(state = initialState, action) {
+const reducerLayout = (state = initialState, action) => {
   switch (action.type) {
-    case IMAGE_UPLOAD:
-      return Object.assign({}, state, {
-        contentDisplay: action.display
-      })
+    case IFRMAE_SWITCH:
+      return {
+        ...state,
+        iframeDisplay: action.onoff
+      }
     default:
       return state
   }
 }
+
+export default reducerLayout

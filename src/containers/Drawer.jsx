@@ -3,29 +3,28 @@ import { listDrawer } from '../constants/ConstLink'
 import './Drawer.css'
 
 export default class Drawer extends Component {
-  generateLink() {
-    const linkOut = []
-    for (let i = 0; i < listDrawer.length; i += 1) {
-      let linkKey = 'drawer-link' + i.toString()
-      let linkTemp = (
+  renderLink = () => {
+    return listDrawer.reduce((output, data, i) => {
+      output.push(
         <a
-          className="mdl-navigation__link"
-          key={linkKey}
-          href={listDrawer[i].link}
+          className="mdl-navigation__link mdl-typography--subhead"
+          key={'drawer-link' + i.toString()}
+          href={data.link}
         >
-          {listDrawer[i].text}
+          {data.text}
         </a>
       )
-      linkOut.push(linkTemp)
-    }
-    return linkOut
+      return output
+    }, [])
   }
 
   render() {
     return (
       <div className="mdl-layout__drawer">
-        <span className="mdl-layout-title">Reference</span>
-        <nav className="mdl-navigation">{this.generateLink()}</nav>
+        <span className="mdl-layout-title mdl-typography--subhead">
+          Reference
+        </span>
+        <nav className="mdl-navigation">{this.renderLink()}</nav>
       </div>
     )
   }

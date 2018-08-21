@@ -11,19 +11,17 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "yarn prettier && yarn build-css && react-scripts build",
+    "build": "yarn prettier && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint ./src/",
-    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.{js,jsx,json,css}\"",
+    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.{js,jsx}\"",
     "precommit": "lint-staged",
-    "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "yarn build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,css}": [
+    "src/**/*.{js,jsx}": [
       "prettier --single-quote --no-semi --trailing-comma none --write",
       "git add"
     ]
@@ -36,8 +34,10 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-flip-move": "^3.0.2",
     "react-redux": "^5.0.7",
     "react-scripts": "1.1.4",
+    "react-webcam": "^1.0.1",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0"
@@ -60,7 +60,6 @@
     "gh-pages": "^1.2.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.2.0",
-    "node-sass-chokidar": "^1.3.3",
     "prettier": "^1.13.7"
   }
 }

@@ -9,7 +9,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <div className="layout-app mdl-layout mdl-js-layout mdl-layout--fixed-header">
           <Header />
           <Drawer />
           <div className="layout-ribbon" />

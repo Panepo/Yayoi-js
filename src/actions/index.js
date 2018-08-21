@@ -1,9 +1,8 @@
 import * as types from '../constants/ConstActionTypes'
 
-export function imageUpload(modelId, display) {
+export function iframeSwitch(onoff) {
   return {
-    type: types.IMAGE_UPLOAD,
-    modelId,
-    display
+    type: types.IFRMAE_SWITCH,
+    onoff
   }
 }

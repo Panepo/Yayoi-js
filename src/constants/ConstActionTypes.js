@@ -1,1 +1,1 @@
-export const IMAGE_UPLOAD = 'IMAGE_UPLOAD'
+export const IFRMAE_SWITCH = 'IFRMAE_SWITCH'

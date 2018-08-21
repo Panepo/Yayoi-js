@@ -1,0 +1,24 @@
+.sensor_button_none {
+  display: none;
+}
+
+.sensor_borderline {
+  margin-top: 10px;
+}
+
+.sensor_initial_black {
+  display: none;
+}
+
+.sensor_video_capture {
+  display: none;
+}
+
+.sensor_overlay {
+  z-index: 10;
+  margin-top: -360px;
+}
+
+.sensor_inputbox {
+  padding: 5px;
+}
