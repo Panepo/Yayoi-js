@@ -3,6 +3,9 @@ import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { iframeSwitch } from '../actions'
+import * as tf from '@tensorflow/tfjs'
+// import * as util from './Converter.util'
+import * as modelConfig from './Converter.config'
 import ImageGallery from '../components/ImageGallery'
 import MdlBusyBar from '../components/MdlBusyBar'
 import './Converter.css'
@@ -13,32 +16,15 @@ class Converter extends Component {
     this.state = {
       isLoading: true,
       isBusy: false,
-      isPlaying: false,
-      isTrained: false,
-      isSensing: false,
-      isAlarming: false,
       imageFile: [],
-      imageWidth: 100,
-      imageHeight: 100,
+      imageWidth: 200,
+      imageHeight: 200,
       imageSize: 1000000,
-      imageFaceDesc: [],
-      videoWidth: 640,
-      videoHeight: 360,
-      videoBuff: null,
-      videoConstraints: {
-        width: 1280,
-        height: 720,
-        facingMode: 'user'
-      },
-      processTime: '0',
-      predictTick: 500,
-      mtcnnParams: { minFaceSize: 50 },
-      recogMinConf: 0.8
+      processTime: '0'
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
-    this.handleTrain = this.handleTrain.bind(this)
-    this.handleWebcam = this.handleWebcam.bind(this)
+    this.handlePredict = this.handlePredict.bind(this)
     this.handleIframe = this.handleIframe.bind(this)
   }
 
@@ -52,25 +38,13 @@ class Converter extends Component {
   }
 
   // ================================================================================
-  // HTML functions
-  // ================================================================================
-
-  setWebcamRef = webcam => {
-    this.webcam = webcam
-  }
-
-  // ================================================================================
   // DNN model functions
   // ================================================================================
 
   modelLoad = () => {
     return new Promise(async resolve => {
-      resolve()
-    })
-  }
-
-  modelTrain = () => {
-    return new Promise(async resolve => {
+      this.model = await tf.loadModel(modelConfig.modelPath)
+      this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
       resolve()
     })
   }
@@ -116,62 +90,27 @@ class Converter extends Component {
       })
     } else {
       this.setState({
-        imageFile: [],
-        imageFaceDesc: [],
-        isTrained: false,
-        isSensing: false
+        imageFile: []
       })
     }
   }
 
   handleClear = () => {
-    clearInterval(this.interval)
     this.setState({
-      imageFile: [],
-      imageFaceDesc: [],
-      isTrained: false,
-      isSensing: false
+      imageFile: []
     })
   }
 
-  handleTrain = async () => {
+  handlePredict = async () => {
     const tstart = performance.now()
-    clearInterval(this.interval)
     this.setState({
-      isBusy: true,
-      imageFaceDesc: [],
-      isTrained: false,
-      isSensing: false
+      isBusy: true
     })
-    this.faceTrained = []
-    await this.modelTrain()
+    await this.modelPredict()
     const tend = performance.now()
     this.setState({
       isBusy: false,
-      isTrained: true,
-      imageFaceDesc: this.faceTrained,
       processTime: Math.floor(tend - tstart).toString() + ' ms'
-    })
-  }
-
-  handleWebcam = () => {
-    if (this.state.isPlaying) {
-      clearInterval(this.interval)
-      this.setState({
-        isPlaying: false,
-        videoBuff: null,
-        isSensing: false,
-        isAlarming: false
-      })
-    } else {
-      this.setState({ isPlaying: true })
-    }
-  }
-
-  handleCapture = () => {
-    return new Promise(async resolve => {
-      await this.setState({ videoBuff: this.webcam.getScreenshot() })
-      resolve()
     })
   }
 
@@ -203,9 +142,9 @@ class Converter extends Component {
         return (
           <button
             className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-            onClick={this.handleTrain}
+            onClick={this.handlePredict}
           >
-            Train Network
+            Enlarge Image
           </button>
         )
       }
@@ -220,7 +159,6 @@ class Converter extends Component {
             type="file"
             onChange={this.handleUpload}
             required
-            multiple
           />
         </label>
         {renderClear()}
@@ -253,6 +191,20 @@ class Converter extends Component {
     }
   }
 
+  renderOutput = () => {
+    if (this.state.imageFile.length > 0) {
+      return (
+        <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--7-col">
+          <canvas
+            ref="outputCanvas"
+            width={this.state.imageWidth * 4}
+            height={this.state.imageHeight * 4}
+          />
+        </div>
+      )
+    }
+  }
+
   render() {
     if (this.state.isLoading) {
       return (
@@ -273,14 +225,13 @@ class Converter extends Component {
       return (
         <div className="layout-container mdl-grid">
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone" />
-          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--4-col">
+          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--3-col">
             {this.renderButton()}
             <div className="mdl-card__actions mdl-card--border" />
             <ImageGallery
               imageSrc={this.state.imageFile}
               imageWidth={this.state.imageWidth}
               imageHeight={this.state.imageHeight}
-              renderHidden
             />
             {this.renderProceeTime()}
             <MdlBusyBar
@@ -289,7 +240,7 @@ class Converter extends Component {
               modelBorderUp
             />
           </div>
-          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--6-col" />
+          {this.renderOutput()}
         </div>
       )
     }

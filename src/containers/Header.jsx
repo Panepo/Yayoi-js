@@ -25,7 +25,7 @@ export default class Header extends Component {
         <IframeCover />
         <div className="mdl-layout__header-row mdl-shadow--4dp">
           <span className="mdl-layout-title mdl-typography--title">
-            <b>Uzuki</b>
+            <b>Yayoi</b>
           </span>
           <div className="mdl-layout-spacer" />
           <nav className="mdl-navigation">{this.renderLink()}</nav>
