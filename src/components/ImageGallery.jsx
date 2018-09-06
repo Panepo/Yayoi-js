@@ -6,53 +6,40 @@ import './ImageGallery.css'
 export default class ImageGallery extends Component {
   renderPreview = () => {
     const { modelId, imageSrc, imageWidth, imageHeight, imageText } = this.props
-    const output = []
-    let outTemp
-    let outKeyTemp
-
-    for (let i = 0; i < imageSrc.length; i += 1) {
-      outKeyTemp = modelId + '_imageGallery_image_' + i.toString()
-      outTemp = (
+    const preview = imageSrc.reduce((output, data, i) => {
+      output.push(
         <img
           className="imageGallery_preview"
-          id={outKeyTemp}
-          key={outKeyTemp}
-          src={imageSrc[i]}
+          id={modelId + '_imageGallery_image_' + i.toString()}
+          key={modelId + '_imageGallery_image_' + i.toString()}
+          src={data}
           width={imageWidth}
           height={imageHeight}
           alt={imageText}
         />
       )
-      output.push(outTemp)
-    }
-
-    return <FlipMove className="flip-wrapper">{output}</FlipMove>
+      return output
+    }, [])
+    return <FlipMove className="flip-wrapper">{preview}</FlipMove>
   }
 
   renderHidden = () => {
     const { renderHidden, modelId, imageSrc, imageText } = this.props
-    const output = []
-    let outTemp
-    let outKeyTemp
-    let outRefTemp
-
     if (renderHidden) {
-      for (let i = 0; i < imageSrc.length; i += 1) {
-        outKeyTemp = modelId + '_imageGallery_hidden_' + i.toString()
-        outRefTemp = 'hidden_' + i.toString()
-        outTemp = (
+      const hidden = imageSrc.reduce((output, data, i) => {
+        output.push(
           <img
             className="imageGallery_hidden"
-            id={outKeyTemp}
-            key={outKeyTemp}
-            ref={outRefTemp}
-            src={imageSrc[i]}
+            id={modelId + '_imageGallery_hidden_' + i.toString()}
+            key={modelId + '_imageGallery_hidden_' + i.toString()}
+            ref={'hidden_' + i.toString()}
+            src={data}
             alt={imageText}
           />
         )
-        output.push(outTemp)
-      }
-      return <div>{output}</div>
+        return output
+      }, [])
+      return <div>{hidden}</div>
     }
   }
 

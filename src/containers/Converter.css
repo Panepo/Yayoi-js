@@ -6,10 +6,6 @@
   margin-top: 10px;
 }
 
-.sensor_initial_black {
-  display: none;
-}
-
 .sensor_video_capture {
   display: none;
 }
@@ -21,4 +17,8 @@
 
 .sensor_inputbox {
   padding: 5px;
+}
+
+.converter_hidden {
+  display: none;
 }

@@ -4,9 +4,9 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { iframeSwitch } from '../actions'
 import * as tf from '@tensorflow/tfjs'
+// import FlipMove from 'react-flip-move'
 // import * as util from './Converter.util'
 import * as modelConfig from './Converter.config'
-import ImageGallery from '../components/ImageGallery'
 import MdlBusyBar from '../components/MdlBusyBar'
 import './Converter.css'
 
@@ -51,6 +51,43 @@ class Converter extends Component {
 
   modelPredict = input => {
     return new Promise(async resolve => {
+      const canvas = document.getElementById('inputCanvas')
+      const canvast = document.getElementById('outputCanvas')
+      const ctxt = canvast.getContext('2d')
+      ctxt.drawImage(
+        canvas,
+        0,
+        0,
+        this.state.imageWidth,
+        this.state.imageHeight,
+        0,
+        0,
+        this.state.imageWidth * 4,
+        this.state.imageHeight * 4
+      )
+      let fq = document.createElement('canvas')
+      fq.width = this.state.imageWidth * 4
+      fq.height = this.state.imageHeight * 4
+      const fqq = fq.getContext('2d')
+      fqq.drawImage(
+        canvas,
+        0,
+        0,
+        this.state.imageWidth,
+        this.state.imageHeight,
+        0,
+        0,
+        this.state.imageWidth * 4,
+        this.state.imageHeight * 4
+      )
+      ctxt.drawImage(
+        fq,
+        0,
+        0,
+        this.state.imageWidth * 4,
+        this.state.imageHeight * 4
+      )
+
       resolve()
     })
   }
@@ -70,14 +107,8 @@ class Converter extends Component {
         event.target.files[i] != null &&
         event.target.files[i].size <= this.state.imageSize
       ) {
-        if (
-          event.target.files[i].type === 'image/jpeg' ||
-          event.target.files[i].type === 'image/png' ||
-          event.target.files[i].type === 'image/bmp'
-        ) {
-          dataTemp = URL.createObjectURL(event.target.files[i])
-          data.push(dataTemp)
-        }
+        dataTemp = URL.createObjectURL(event.target.files[i])
+        data.push(dataTemp)
       }
     }
 
@@ -88,6 +119,20 @@ class Converter extends Component {
         processTime: Math.floor(tend - tstart).toString() + ' ms',
         isSensing: false
       })
+      const image = document.getElementById('inputImage')
+      const canvas = document.getElementById('inputCanvas')
+      const ctx = canvas.getContext('2d')
+
+      image.onload = () => {
+        ctx.clearRect(0, 0, this.state.imageWidth, this.state.imageHeight)
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          this.state.imageWidth,
+          this.state.imageHeight
+        )
+      }
     } else {
       this.setState({
         imageFile: []
@@ -99,6 +144,9 @@ class Converter extends Component {
     this.setState({
       imageFile: []
     })
+    const canvas = document.getElementById('inputCanvas')
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, this.state.imageWidth, this.state.imageHeight)
   }
 
   handlePredict = async () => {
@@ -157,12 +205,39 @@ class Converter extends Component {
           <input
             className="sensor_button_none"
             type="file"
+            accept="image/*"
             onChange={this.handleUpload}
             required
           />
         </label>
         {renderClear()}
         {renderTrain()}
+      </div>
+    )
+  }
+
+  renderImage = () => {
+    return (
+      <div>
+        <img
+          className="converter_hidden"
+          id="inputImage"
+          src={this.state.imageFile[0]}
+          width={this.state.imageWidth}
+          height={this.state.imageHeight}
+          alt={this.state.text}
+        />
+        <canvas
+          id="inputCanvas"
+          width={this.state.imageWidth}
+          height={this.state.imageHeight}
+        />
+        <canvas
+          className="converter_hidden"
+          id="tempCanvas"
+          width={this.state.imageWidth * 4}
+          height={this.state.imageHeight * 4}
+        />
       </div>
     )
   }
@@ -194,12 +269,14 @@ class Converter extends Component {
   renderOutput = () => {
     if (this.state.imageFile.length > 0) {
       return (
-        <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--7-col">
-          <canvas
-            ref="outputCanvas"
-            width={this.state.imageWidth * 4}
-            height={this.state.imageHeight * 4}
-          />
+        <div className="mdl-cell mdl-cell--7-col">
+          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800">
+            <canvas
+              id="outputCanvas"
+              width={this.state.imageWidth * 4}
+              height={this.state.imageHeight * 4}
+            />
+          </div>
         </div>
       )
     }
@@ -212,12 +289,6 @@ class Converter extends Component {
           <div className="mdl-cell mdl-cell--4-col" />
           <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--4-col">
             <MdlBusyBar modelText={'Loading...'} />
-            <img
-              className="sensor_initial_black"
-              id="initial_black"
-              src="./black.png"
-              alt="initial_black"
-            />
           </div>
         </div>
       )
@@ -228,11 +299,7 @@ class Converter extends Component {
           <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--3-col">
             {this.renderButton()}
             <div className="mdl-card__actions mdl-card--border" />
-            <ImageGallery
-              imageSrc={this.state.imageFile}
-              imageWidth={this.state.imageWidth}
-              imageHeight={this.state.imageHeight}
-            />
+            {this.renderImage()}
             {this.renderProceeTime()}
             <MdlBusyBar
               modelSwitch={this.state.isBusy}
