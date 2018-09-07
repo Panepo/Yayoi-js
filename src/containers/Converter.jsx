@@ -49,45 +49,71 @@ class Converter extends Component {
     })
   }
 
-  modelPredict = input => {
+  modelPredict = (inputId, outputId) => {
     return new Promise(async resolve => {
-      const canvas = document.getElementById('inputCanvas')
-      const canvast = document.getElementById('outputCanvas')
-      const ctxt = canvast.getContext('2d')
-      ctxt.drawImage(
-        canvas,
-        0,
-        0,
-        this.state.imageWidth,
-        this.state.imageHeight,
-        0,
-        0,
-        this.state.imageWidth * 4,
-        this.state.imageHeight * 4
-      )
-      let fq = document.createElement('canvas')
-      fq.width = this.state.imageWidth * 4
-      fq.height = this.state.imageHeight * 4
-      const fqq = fq.getContext('2d')
-      fqq.drawImage(
-        canvas,
-        0,
-        0,
-        this.state.imageWidth,
-        this.state.imageHeight,
-        0,
-        0,
-        this.state.imageWidth * 4,
-        this.state.imageHeight * 4
-      )
-      ctxt.drawImage(
-        fq,
-        0,
-        0,
-        this.state.imageWidth * 4,
-        this.state.imageHeight * 4
-      )
+      const canvas = document.getElementById(inputId)
+      const canvaso = document.getElementById(outputId)
+      const ctxo = canvaso.getContext('2d')
 
+      // image resize
+      let canvast1 = document.createElement('canvas')
+      canvast1.width = this.state.imageWidth * 4
+      canvast1.height = this.state.imageHeight * 4
+      const ctxt1 = canvast1.getContext('2d')
+      ctxt1.drawImage(
+        canvas,
+        0,
+        0,
+        this.state.imageWidth,
+        this.state.imageHeight,
+        0,
+        0,
+        this.state.imageWidth * 4,
+        this.state.imageHeight * 4
+      )
+      const ctxt1img = ctxt1.getImageData(
+        0,
+        0,
+        this.state.imageWidth * 4,
+        this.state.imageHeight * 4
+      )
+      let ctxt1data = ctxt1img.data
+
+      // transform from rgb to ycbcr
+      let canvast2 = document.createElement('canvas')
+      const ctxt2 = canvast2.getContext('2d')
+      for (let i = 0; i < ctxt1data.length; i += 4) {
+        let r = ctxt1data[i]
+        let g = ctxt1data[i + 1]
+        let b = ctxt1data[i + 2]
+
+        ctxt1data[i] = 0.299 * r + 0.587 * g + 0.114 * b + 0
+        ctxt1data[i + 1] = -0.169 * r + -0.331 * g + 0.5 * b + 128
+        ctxt1data[i + 2] = 0.5 * r + -0.419 * g + -0.081 * b + 128
+      }
+      ctxt2.putImageData(ctxt1data, 0, 0)
+
+      // transform from ycbcr to rgb
+      const ctxt2img = ctxt2.getImageData(
+        0,
+        0,
+        this.state.imageWidth * 4,
+        this.state.imageHeight * 4
+      )
+      let ctxt2data = ctxt2img.data
+      for (let i = 0; i < ctxt2data.length; i += 4) {
+        let r = ctxt2data[i]
+        let g = ctxt2data[i + 1]
+        let b = ctxt2data[i + 2]
+
+        ctxt2data[i] = 0.299 * r + 0.587 * g + 0.114 * b + 0
+        ctxt2data[i + 1] = -0.169 * r + -0.331 * g + 0.5 * b + 128
+        ctxt2data[i + 2] = 0.5 * r + -0.419 * g + -0.081 * b + 128
+      }
+      ctxo.putImageData(ctxt2data, 0, 0)
+
+      canvast1.remove()
+      canvast2.remove()
       resolve()
     })
   }
@@ -154,7 +180,7 @@ class Converter extends Component {
     this.setState({
       isBusy: true
     })
-    await this.modelPredict()
+    await this.modelPredict('inputCanvas', 'outputCanvas')
     const tend = performance.now()
     this.setState({
       isBusy: false,
@@ -231,12 +257,6 @@ class Converter extends Component {
           id="inputCanvas"
           width={this.state.imageWidth}
           height={this.state.imageHeight}
-        />
-        <canvas
-          className="converter_hidden"
-          id="tempCanvas"
-          width={this.state.imageWidth * 4}
-          height={this.state.imageHeight * 4}
         />
       </div>
     )
