@@ -20,7 +20,8 @@ class Converter extends Component {
       imageWidth: 200,
       imageHeight: 200,
       imageSize: 1000000,
-      processTime: '0'
+      processTime: '0',
+      scale: 2
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
@@ -51,31 +52,36 @@ class Converter extends Component {
 
   modelPredict = (inputId, outputId) => {
     return new Promise(async resolve => {
-      const { imageWidth, imageHeight } = this.state
+      const { imageWidth, imageHeight, scale } = this.state
       const canvas = document.getElementById(inputId)
       const canvaso = document.getElementById(outputId)
 
       // temp canvas declaration
       let canvast1 = document.createElement('canvas')
-      canvast1.width = imageWidth * 4
-      canvast1.height = imageHeight * 4
+      canvast1.width = imageWidth * scale
+      canvast1.height = imageHeight * scale
       let canvast2 = document.createElement('canvas')
-      canvast2.width = imageWidth * 4
-      canvast2.height = imageHeight * 4
+      canvast2.width = imageWidth * scale
+      canvast2.height = imageHeight * scale
       let canvast3 = document.createElement('canvas')
-      canvast3.width = imageWidth * 4
-      canvast3.height = imageHeight * 4
+      canvast3.width = imageWidth * scale
+      canvast3.height = imageHeight * scale
 
-      modelUtil.canvasResize(canvas, canvast1, imageWidth, imageHeight, 4)
-      modelUtil.rgb2ycbcr(canvast1, canvast2, imageWidth * 4, imageHeight * 4)
+      modelUtil.canvasResize(canvas, canvast1, imageWidth, imageHeight, scale)
+      modelUtil.rgb2ycbcr(
+        canvast1,
+        canvast2,
+        imageWidth * scale,
+        imageHeight * scale
+      )
 
       tf.tidy(() => {
         const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
         const tensorNor = tensorInp.div(tf.scalar(255))
         const tensorBat = tensorNor.reshape([
           1,
-          imageWidth * 4,
-          imageHeight * 4,
+          imageWidth * scale,
+          imageHeight * scale,
           1
         ])
         // const tensorOut = this.model.predict(tensorBat, {batchSize: 1}).mul(tf.scalar(255))
@@ -83,7 +89,12 @@ class Converter extends Component {
         this.model.predict(tensorBat, { batchSize: 1 }).print()
       })
 
-      modelUtil.ycbcr2rgb(canvast2, canvaso, imageWidth * 4, imageHeight * 4)
+      modelUtil.ycbcr2rgb(
+        canvast2,
+        canvaso,
+        imageWidth * scale,
+        imageHeight * scale
+      )
 
       // remove temp canvas
       canvast1.remove()
@@ -259,14 +270,15 @@ class Converter extends Component {
   }
 
   renderOutput = () => {
+    const { imageWidth, imageHeight, scale } = this.state
     if (this.state.imageFile.length > 0) {
       return (
         <div className="mdl-cell mdl-cell--7-col">
           <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800">
             <canvas
               id="outputCanvas"
-              width={this.state.imageWidth * 4}
-              height={this.state.imageHeight * 4}
+              width={imageWidth * scale}
+              height={imageHeight * scale}
             />
           </div>
         </div>
