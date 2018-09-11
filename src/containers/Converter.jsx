@@ -5,8 +5,8 @@ import { connect } from 'react-redux'
 import { iframeSwitch } from '../actions'
 import * as tf from '@tensorflow/tfjs'
 // import FlipMove from 'react-flip-move'
-// import * as util from './Converter.util'
 import * as modelConfig from './Converter.config'
+import * as modelUtil from './Converter.util'
 import MdlBusyBar from '../components/MdlBusyBar'
 import './Converter.css'
 
@@ -51,90 +51,41 @@ class Converter extends Component {
 
   modelPredict = (inputId, outputId) => {
     return new Promise(async resolve => {
+      const { imageWidth, imageHeight } = this.state
       const canvas = document.getElementById(inputId)
       const canvaso = document.getElementById(outputId)
-      const ctxo = canvaso.getContext('2d')
 
-      // image resize
+      // temp canvas declaration
       let canvast1 = document.createElement('canvas')
-      canvast1.width = this.state.imageWidth * 4
-      canvast1.height = this.state.imageHeight * 4
-      const ctxt1 = canvast1.getContext('2d')
-      ctxt1.drawImage(
-        canvas,
-        0,
-        0,
-        this.state.imageWidth,
-        this.state.imageHeight,
-        0,
-        0,
-        this.state.imageWidth * 4,
-        this.state.imageHeight * 4
-      )
-      const ctxt1img = ctxt1.getImageData(
-        0,
-        0,
-        this.state.imageWidth * 4,
-        this.state.imageHeight * 4
-      )
-      let ctxt1data = ctxt1img.data
-
-      // transform from rgb to ycbcr
+      canvast1.width = imageWidth * 4
+      canvast1.height = imageHeight * 4
       let canvast2 = document.createElement('canvas')
-      canvast2.width = this.state.imageWidth * 4
-      canvast2.height = this.state.imageHeight * 4
-      const ctxt2 = canvast2.getContext('2d')
-      for (let i = 0; i < ctxt1data.length; i += 4) {
-        let r = ctxt1data[i]
-        let g = ctxt1data[i + 1]
-        let b = ctxt1data[i + 2]
+      canvast2.width = imageWidth * 4
+      canvast2.height = imageHeight * 4
+      let canvast3 = document.createElement('canvas')
+      canvast3.width = imageWidth * 4
+      canvast3.height = imageHeight * 4
 
-        ctxt1data[i] = Math.max(
-          0,
-          Math.min(255, Math.floor(0.299 * r + 0.587 * g + 0.114 * b + 0))
-        )
-        ctxt1data[i + 1] = Math.max(
-          0,
-          Math.min(255, Math.floor(-0.169 * r + -0.331 * g + 0.5 * b + 128))
-        )
-        ctxt1data[i + 2] = Math.max(
-          0,
-          Math.min(255, Math.floor(0.5 * r + -0.419 * g + -0.081 * b + 128))
-        )
-      }
-      ctxt2.putImageData(ctxt1img, 0, 0)
+      modelUtil.canvasResize(canvas, canvast1, imageWidth, imageHeight, 4)
+      modelUtil.rgb2ycbcr(canvast1, canvast2, imageWidth * 4, imageHeight * 4)
 
-      // transform from ycbcr to rgb
-      const ctxt2img = ctxt2.getImageData(
-        0,
-        0,
-        this.state.imageWidth * 4,
-        this.state.imageHeight * 4
-      )
-      let ctxt2data = ctxt2img.data
-      for (let i = 0; i < ctxt2data.length; i += 4) {
-        let y = ctxt2data[i]
-        let cb = ctxt2data[i + 1]
-        let cr = ctxt2data[i + 2]
+      tf.tidy(() => {
+        const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
+        const tensorNor = tensorInp.div(tf.scalar(255))
+        const tensorBat = tensorNor.reshape([
+          1,
+          imageWidth * 4,
+          imageHeight * 4,
+          1
+        ])
+        // const tensorOut = this.model.predict(tensorBat, {batchSize: 1}).mul(tf.scalar(255))
+        // tf.toPixels(tensorOut, canvast3)
+        this.model.predict(tensorBat, { batchSize: 1 }).print()
+      })
 
-        ctxt2data[i] = Math.max(
-          0,
-          Math.min(255, Math.floor(y + 1.402 * (cr - 128)))
-        )
-        ctxt2data[i + 1] = Math.max(
-          0,
-          Math.min(
-            255,
-            Math.floor(y - 0.34414 * (cb - 128) - 0.71414 * (cr - 128))
-          )
-        )
-        ctxt2data[i + 2] = Math.max(
-          0,
-          Math.min(255, Math.floor(y + 1.772 * (cb - 128)))
-        )
-      }
-      ctxo.putImageData(ctxt2img, 0, 0)
+      modelUtil.ycbcr2rgb(canvast2, canvaso, imageWidth * 4, imageHeight * 4)
 
+      // remove temp canvas
       canvast1.remove()
       canvast2.remove()
       resolve()

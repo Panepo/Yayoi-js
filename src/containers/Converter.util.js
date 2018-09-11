@@ -1,62 +1,67 @@
-export class YayoiImage {
-  constructor(width, height, buffer) {
-    this.width = width
-    this.height = height
-    this.buffer = new Uint8ClampedArray(width * height)
-    if (buffer == null) {
-      return
-    }
-    if (buffer.length !== width * height) {
-      throw new Error('Illegal buffer length')
-    }
-    this.buffer.set(buffer)
-  }
+export const rgb2ycbcr = (canvasi, canvaso, width, height) => {
+  const ctxi = canvasi.getContext('2d')
+  const ctxo = canvaso.getContext('2d')
 
-  static channelDecompose(image, width, height) {
-    let imageR = new YayoiImage(width, height)
-    let imageG = new YayoiImage(width, height)
-    let imageB = new YayoiImage(width, height)
-    let imageA = new YayoiImage(width, height)
-    for (let w = 0; w < width; w++) {
-      for (let h = 0; h < height; h++) {
-        let index = w + h * width
-        imageR.buffer[index] = image[w * 4 + h * width * 4]
-        imageG.buffer[index] = image[w * 4 + h * width * 4 + 1]
-        imageB.buffer[index] = image[w * 4 + h * width * 4 + 2]
-        imageA.buffer[index] = image[w * 4 + h * width * 4 + 3]
-      }
-    }
-    return [imageR, imageG, imageB, imageA]
-  }
+  const ctxiImg = ctxi.getImageData(0, 0, width, height)
+  let ctxiData = ctxiImg.data
 
-  static channelCompose(imageR, imageG, imageB, imageA) {
-    let width = imageR.width
-    let height = imageR.height
-    let image = new Uint8ClampedArray(width * height * 4)
-    for (let i = 0; i < width * height; i++) {
-      image[i * 4] = imageR.buffer[i]
-      image[i * 4 + 1] = imageG.buffer[i]
-      image[i * 4 + 2] = imageB.buffer[i]
-      image[i * 4 + 3] = 255
-    }
-    return image
-  }
+  for (let i = 0; i < ctxiData.length; i += 4) {
+    let r = ctxiData[i]
+    let g = ctxiData[i + 1]
+    let b = ctxiData[i + 2]
 
-  resize(scale) {
-    let width = this.width
-    let height = this.height
-    let scaledWidth = Math.round(width * scale)
-    let scaledHeight = Math.round(height * scale)
-    let scaledImage = new YayoiImage(scaledWidth, scaledHeight)
-    for (let w = 0; w < scaledWidth; w++) {
-      for (let h = 0; h < scaledHeight; h++) {
-        let scaled_index = w + h * scaledWidth
-        let w_original = Math.round((w + 1) / scale) - 1
-        let h_original = Math.round((h + 1) / scale) - 1
-        let index_original = w_original + h_original * width
-        scaledImage.buffer[scaled_index] = this.buffer[index_original]
-      }
-    }
-    return scaledImage
+    ctxiData[i] = Math.max(
+      0,
+      Math.min(255, Math.floor(0.299 * r + 0.587 * g + 0.114 * b + 0))
+    )
+    ctxiData[i + 1] = Math.max(
+      0,
+      Math.min(255, Math.floor(-0.169 * r + -0.331 * g + 0.5 * b + 128))
+    )
+    ctxiData[i + 2] = Math.max(
+      0,
+      Math.min(255, Math.floor(0.5 * r + -0.419 * g + -0.081 * b + 128))
+    )
   }
+  ctxo.putImageData(ctxiImg, 0, 0)
+}
+
+export const ycbcr2rgb = (canvasi, canvaso, width, height) => {
+  const ctxi = canvasi.getContext('2d')
+  const ctxo = canvaso.getContext('2d')
+
+  const ctxiImg = ctxi.getImageData(0, 0, width, height)
+  let ctxiData = ctxiImg.data
+
+  for (let i = 0; i < ctxiData.length; i += 4) {
+    let y = ctxiData[i]
+    let cb = ctxiData[i + 1]
+    let cr = ctxiData[i + 2]
+
+    ctxiData[i] = Math.max(0, Math.min(255, Math.floor(y + 1.402 * (cr - 128))))
+    ctxiData[i + 1] = Math.max(
+      0,
+      Math.min(255, Math.floor(y - 0.34414 * (cb - 128) - 0.71414 * (cr - 128)))
+    )
+    ctxiData[i + 2] = Math.max(
+      0,
+      Math.min(255, Math.floor(y + 1.772 * (cb - 128)))
+    )
+  }
+  ctxo.putImageData(ctxiImg, 0, 0)
+}
+
+export const canvasResize = (canvasi, canvaso, width, height, scale) => {
+  const ctxo = canvaso.getContext('2d')
+  ctxo.drawImage(
+    canvasi,
+    0,
+    0,
+    width,
+    height,
+    0,
+    0,
+    width * scale,
+    height * scale
+  )
 }
