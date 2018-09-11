@@ -44,7 +44,7 @@ class Converter extends Component {
   modelLoad = () => {
     return new Promise(async resolve => {
       this.model = await tf.loadModel(modelConfig.modelPath)
-      this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
+      this.model.predict(tf.zeros([1, 64, 64, 1])).dispose()
       resolve()
     })
   }
@@ -81,17 +81,28 @@ class Converter extends Component {
 
       // transform from rgb to ycbcr
       let canvast2 = document.createElement('canvas')
+      canvast2.width = this.state.imageWidth * 4
+      canvast2.height = this.state.imageHeight * 4
       const ctxt2 = canvast2.getContext('2d')
       for (let i = 0; i < ctxt1data.length; i += 4) {
         let r = ctxt1data[i]
         let g = ctxt1data[i + 1]
         let b = ctxt1data[i + 2]
 
-        ctxt1data[i] = 0.299 * r + 0.587 * g + 0.114 * b + 0
-        ctxt1data[i + 1] = -0.169 * r + -0.331 * g + 0.5 * b + 128
-        ctxt1data[i + 2] = 0.5 * r + -0.419 * g + -0.081 * b + 128
+        ctxt1data[i] = Math.max(
+          0,
+          Math.min(255, Math.floor(0.299 * r + 0.587 * g + 0.114 * b + 0))
+        )
+        ctxt1data[i + 1] = Math.max(
+          0,
+          Math.min(255, Math.floor(-0.169 * r + -0.331 * g + 0.5 * b + 128))
+        )
+        ctxt1data[i + 2] = Math.max(
+          0,
+          Math.min(255, Math.floor(0.5 * r + -0.419 * g + -0.081 * b + 128))
+        )
       }
-      ctxt2.putImageData(ctxt1data, 0, 0)
+      ctxt2.putImageData(ctxt1img, 0, 0)
 
       // transform from ycbcr to rgb
       const ctxt2img = ctxt2.getImageData(
@@ -102,15 +113,27 @@ class Converter extends Component {
       )
       let ctxt2data = ctxt2img.data
       for (let i = 0; i < ctxt2data.length; i += 4) {
-        let r = ctxt2data[i]
-        let g = ctxt2data[i + 1]
-        let b = ctxt2data[i + 2]
+        let y = ctxt2data[i]
+        let cb = ctxt2data[i + 1]
+        let cr = ctxt2data[i + 2]
 
-        ctxt2data[i] = 0.299 * r + 0.587 * g + 0.114 * b + 0
-        ctxt2data[i + 1] = -0.169 * r + -0.331 * g + 0.5 * b + 128
-        ctxt2data[i + 2] = 0.5 * r + -0.419 * g + -0.081 * b + 128
+        ctxt2data[i] = Math.max(
+          0,
+          Math.min(255, Math.floor(y + 1.402 * (cr - 128)))
+        )
+        ctxt2data[i + 1] = Math.max(
+          0,
+          Math.min(
+            255,
+            Math.floor(y - 0.34414 * (cb - 128) - 0.71414 * (cr - 128))
+          )
+        )
+        ctxt2data[i + 2] = Math.max(
+          0,
+          Math.min(255, Math.floor(y + 1.772 * (cb - 128)))
+        )
       }
-      ctxo.putImageData(ctxt2data, 0, 0)
+      ctxo.putImageData(ctxt2img, 0, 0)
 
       canvast1.remove()
       canvast2.remove()
@@ -203,8 +226,7 @@ class Converter extends Component {
         return (
           <button
             className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-            onClick={this.handleClear}
-          >
+            onClick={this.handleClear}>
             Clear Image
           </button>
         )
@@ -216,8 +238,7 @@ class Converter extends Component {
         return (
           <button
             className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-            onClick={this.handlePredict}
-          >
+            onClick={this.handlePredict}>
             Enlarge Image
           </button>
         )

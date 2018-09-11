@@ -15,14 +15,14 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint ./src/",
-    "prettier": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.{js,jsx}\"",
+    "prettier": "prettier --single-quote --no-semi --jsx-bracket-same-line --trailing-comma none --write \"src/**/*.{js,jsx}\"",
     "precommit": "lint-staged",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build"
   },
   "lint-staged": {
     "src/**/*.{js,jsx}": [
-      "prettier --single-quote --no-semi --trailing-comma none --write",
+      "prettier --single-quote --no-semi --jsx-bracket-same-line --trailing-comma none --write",
       "git add"
     ]
   },
