@@ -21,7 +21,7 @@ class Converter extends Component {
       imageHeight: 200,
       imageSize: 1000000,
       processTime: '0',
-      scale: 2
+      scale: 1
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
@@ -51,7 +51,7 @@ class Converter extends Component {
   }
 
   modelPredict = (inputId, outputId) => {
-    return new Promise(async resolve => {
+    return new Promise(resolve => {
       const { imageWidth, imageHeight, scale } = this.state
       const canvas = document.getElementById(inputId)
       const canvaso = document.getElementById(outputId)
@@ -75,7 +75,7 @@ class Converter extends Component {
         imageHeight * scale
       )
 
-      tf.tidy(() => {
+      const dataPredict = tf.tidy(() => {
         const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
         const tensorNor = tensorInp.div(tf.scalar(255))
         const tensorBat = tensorNor.reshape([
@@ -84,13 +84,23 @@ class Converter extends Component {
           imageHeight * scale,
           1
         ])
-        // const tensorOut = this.model.predict(tensorBat, {batchSize: 1}).mul(tf.scalar(255))
-        // tf.toPixels(tensorOut, canvast3)
-        this.model.predict(tensorBat, { batchSize: 1 }).print()
+        const tensorOut = this.model.predict(tensorBat, { batchSize: 1 })
+        tensorOut.mul(tf.scalar(255))
+        const tensorValues = tensorOut.dataSync()
+        return Array.from(tensorValues)
       })
 
-      modelUtil.ycbcr2rgb(
+      modelUtil.mergeResult(
         canvast2,
+        canvast3,
+        dataPredict,
+        imageWidth * scale,
+        imageHeight * scale,
+        6
+      )
+
+      modelUtil.ycbcr2rgb(
+        canvast3,
         canvaso,
         imageWidth * scale,
         imageHeight * scale
