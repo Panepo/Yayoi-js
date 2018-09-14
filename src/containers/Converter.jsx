@@ -4,9 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { iframeSwitch } from '../actions'
 import * as tf from '@tensorflow/tfjs'
-// import FlipMove from 'react-flip-move'
-import * as modelConfig from './Converter.config'
-import * as modelUtil from './Converter.util'
+import * as srcnn from './Srcnn'
 import MdlBusyBar from '../components/MdlBusyBar'
 import './Converter.css'
 
@@ -34,83 +32,9 @@ class Converter extends Component {
   // ================================================================================
 
   componentDidMount = async () => {
-    await this.modelLoad()
+    this.model = await tf.loadModel(srcnn.modelPath)
+    await this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
     this.setState({ isLoading: false })
-  }
-
-  // ================================================================================
-  // DNN model functions
-  // ================================================================================
-
-  modelLoad = () => {
-    return new Promise(async resolve => {
-      this.model = await tf.loadModel(modelConfig.modelPath)
-      this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
-      resolve()
-    })
-  }
-
-  modelPredict = (inputId, outputId) => {
-    return new Promise(resolve => {
-      const { imageWidth, imageHeight, scale } = this.state
-      const canvas = document.getElementById(inputId)
-      const canvaso = document.getElementById(outputId)
-
-      // temp canvas declaration
-      let canvast1 = document.createElement('canvas')
-      canvast1.width = imageWidth * scale
-      canvast1.height = imageHeight * scale
-      let canvast2 = document.createElement('canvas')
-      canvast2.width = imageWidth * scale
-      canvast2.height = imageHeight * scale
-      let canvast3 = document.createElement('canvas')
-      canvast3.width = imageWidth * scale
-      canvast3.height = imageHeight * scale
-
-      modelUtil.canvasResize(canvas, canvast1, imageWidth, imageHeight, scale)
-      modelUtil.rgb2ycbcr(
-        canvast1,
-        canvast2,
-        imageWidth * scale,
-        imageHeight * scale
-      )
-
-      const dataPredict = tf.tidy(() => {
-        const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
-        const tensorNor = tensorInp.div(tf.scalar(255))
-        const tensorBat = tensorNor.reshape([
-          1,
-          imageWidth * scale,
-          imageHeight * scale,
-          1
-        ])
-        const tensorOut = this.model.predict(tensorBat, { batchSize: 1 })
-        const tensorVal = tensorOut.mul(tf.scalar(255))
-        return Array.from(tensorVal.dataSync())
-      })
-
-      modelUtil.mergeResult(
-        canvast2,
-        canvast3,
-        dataPredict,
-        imageWidth * scale,
-        imageHeight * scale,
-        6
-      )
-
-      modelUtil.ycbcr2rgb(
-        canvast3,
-        canvaso,
-        imageWidth * scale,
-        imageHeight * scale
-      )
-
-      // remove temp canvas
-      canvast1.remove()
-      canvast2.remove()
-      canvast3.remove()
-      resolve()
-    })
   }
 
   // ================================================================================
@@ -120,7 +44,6 @@ class Converter extends Component {
   handleUpload = event => {
     const data = []
     const tstart = performance.now()
-    clearInterval(this.interval)
 
     for (let i = 0; i < event.target.files.length; i += 1) {
       let dataTemp
@@ -171,21 +94,24 @@ class Converter extends Component {
   }
 
   handlePredict = async () => {
+    const { imageWidth, imageHeight, scale } = this.state
     const tstart = performance.now()
-    this.setState({
-      isBusy: true
-    })
-    await this.modelPredict('inputCanvas', 'outputCanvas')
+    await srcnn.predict(
+      this.model,
+      'inputCanvas',
+      'outputCanvas',
+      imageWidth,
+      imageHeight,
+      scale
+    )
     const tend = performance.now()
     this.setState({
-      isBusy: false,
       processTime: Math.floor(tend - tstart).toString() + ' ms'
     })
   }
 
   handleIframe = () => {
-    const { iframeSwitch } = this.props
-    iframeSwitch(true)
+    this.props.iframeSwitch(true)
   }
 
   // ================================================================================

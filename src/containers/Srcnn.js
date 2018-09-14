@@ -1,3 +1,7 @@
+import * as tf from '@tensorflow/tfjs'
+
+export const modelPath = './model/model.json'
+
 export const rgb2ycbcr = (canvasi, canvaso, width, height) => {
   const ctxi = canvasi.getContext('2d')
   const ctxo = canvaso.getContext('2d')
@@ -90,4 +94,40 @@ export const mergeResult = (canvasi, canvaso, data, width, height, padding) => {
     }
   }
   ctxo.putImageData(ctxiImg, 0, 0)
+}
+
+export const predict = (model, inputId, outputId, width, height, scale) => {
+  const canvas = document.getElementById(inputId)
+  const canvaso = document.getElementById(outputId)
+
+  // temp canvas declaration
+  let canvast1 = document.createElement('canvas')
+  canvast1.width = width * scale
+  canvast1.height = height * scale
+  let canvast2 = document.createElement('canvas')
+  canvast2.width = width * scale
+  canvast2.height = height * scale
+  let canvast3 = document.createElement('canvas')
+  canvast3.width = width * scale
+  canvast3.height = height * scale
+
+  canvasResize(canvas, canvast1, width, height, scale)
+  rgb2ycbcr(canvast1, canvast2, width * scale, height * scale)
+
+  const dataPredict = tf.tidy(() => {
+    const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
+    const tensorNor = tensorInp.div(tf.scalar(255))
+    const tensorBat = tensorNor.reshape([1, width * scale, height * scale, 1])
+    const tensorOut = model.predict(tensorBat, { batchSize: 1 })
+    const tensorVal = tensorOut.mul(tf.scalar(255))
+    return Array.from(tensorVal.dataSync())
+  })
+
+  mergeResult(canvast2, canvast3, dataPredict, width * scale, height * scale, 6)
+  ycbcr2rgb(canvast3, canvaso, width * scale, height * scale)
+
+  // remove temp canvas
+  canvast1.remove()
+  canvast2.remove()
+  canvast3.remove()
 }
