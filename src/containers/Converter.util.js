@@ -1,7 +1,6 @@
 export const rgb2ycbcr = (canvasi, canvaso, width, height) => {
   const ctxi = canvasi.getContext('2d')
   const ctxo = canvaso.getContext('2d')
-
   const ctxiImg = ctxi.getImageData(0, 0, width, height)
   let ctxiData = ctxiImg.data
 
@@ -29,7 +28,6 @@ export const rgb2ycbcr = (canvasi, canvaso, width, height) => {
 export const ycbcr2rgb = (canvasi, canvaso, width, height) => {
   const ctxi = canvasi.getContext('2d')
   const ctxo = canvaso.getContext('2d')
-
   const ctxiImg = ctxi.getImageData(0, 0, width, height)
   let ctxiData = ctxiImg.data
 
@@ -72,21 +70,22 @@ export const mergeResult = (canvasi, canvaso, data, width, height, padding) => {
 
   const ctxiImg = ctxi.getImageData(0, 0, width, height)
   let ctxiData = ctxiImg.data
+  let j = 0
 
   for (let i = 0; i < ctxiData.length; i += 4) {
-    let y = 0
     let idw = Math.floor(i / (width * 4))
-    if (idw > padding && idw < height - padding) {
+    if (idw >= padding && idw < height - padding) {
       let idy = i % (width * 4)
-      if (idy > padding * 4 && idy < (width - padding) * 4) {
-        if (data[y] > 255) {
+      if (idy >= padding * 4 && idy < (width - padding) * 4) {
+        // console.log('orig:' + ctxiData[i] + ' replace:' + data[j])
+        if (data[j] > 255) {
           ctxiData[i] = 255
-        } else if (data[y] < 0) {
+        } else if (data[j] < 0) {
           ctxiData[i] = 0
         } else {
-          ctxiData[i] = data[y]
+          ctxiData[i] = data[j]
         }
-        y += 1
+        j = j + 1
       }
     }
   }

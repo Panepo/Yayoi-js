@@ -17,11 +17,11 @@ class Converter extends Component {
       isLoading: true,
       isBusy: false,
       imageFile: [],
-      imageWidth: 200,
-      imageHeight: 200,
+      imageWidth: 100,
+      imageHeight: 100,
       imageSize: 1000000,
       processTime: '0',
-      scale: 1
+      scale: 2
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
@@ -45,7 +45,7 @@ class Converter extends Component {
   modelLoad = () => {
     return new Promise(async resolve => {
       this.model = await tf.loadModel(modelConfig.modelPath)
-      this.model.predict(tf.zeros([1, 64, 64, 1])).dispose()
+      this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
       resolve()
     })
   }
@@ -85,9 +85,8 @@ class Converter extends Component {
           1
         ])
         const tensorOut = this.model.predict(tensorBat, { batchSize: 1 })
-        tensorOut.mul(tf.scalar(255))
-        const tensorValues = tensorOut.dataSync()
-        return Array.from(tensorValues)
+        const tensorVal = tensorOut.mul(tf.scalar(255))
+        return Array.from(tensorVal.dataSync())
       })
 
       modelUtil.mergeResult(
@@ -109,6 +108,7 @@ class Converter extends Component {
       // remove temp canvas
       canvast1.remove()
       canvast2.remove()
+      canvast3.remove()
       resolve()
     })
   }
@@ -199,7 +199,7 @@ class Converter extends Component {
           <button
             className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
             onClick={this.handleClear}>
-            Clear Image
+            Clear
           </button>
         )
       }
@@ -211,7 +211,7 @@ class Converter extends Component {
           <button
             className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
             onClick={this.handlePredict}>
-            Enlarge Image
+            Enlarge
           </button>
         )
       }
@@ -283,7 +283,7 @@ class Converter extends Component {
     const { imageWidth, imageHeight, scale } = this.state
     if (this.state.imageFile.length > 0) {
       return (
-        <div className="mdl-cell mdl-cell--7-col">
+        <div className="mdl-cell mdl-cell--6-col">
           <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800">
             <canvas
               id="outputCanvas"
@@ -310,7 +310,7 @@ class Converter extends Component {
       return (
         <div className="layout-container mdl-grid">
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone" />
-          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--3-col">
+          <div className="layout-content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--4-col">
             {this.renderButton()}
             <div className="mdl-card__actions mdl-card--border" />
             {this.renderImage()}
