@@ -15,8 +15,8 @@ class Converter extends Component {
       isLoading: true,
       isBusy: false,
       imageFile: [],
-      imageWidth: 100,
-      imageHeight: 100,
+      imageWidth: 200,
+      imageHeight: 200,
       imageSize: 1000000,
       processTime: '0',
       scale: 2
@@ -96,7 +96,7 @@ class Converter extends Component {
   handlePredict = async () => {
     const { imageWidth, imageHeight, scale } = this.state
     const tstart = performance.now()
-    await srcnn.predict(
+    await srcnn.predict4(
       this.model,
       'inputCanvas',
       'outputCanvas',
