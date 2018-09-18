@@ -96,13 +96,16 @@ class Converter extends Component {
   handlePredict = async () => {
     const { imageWidth, imageHeight, scale } = this.state
     const tstart = performance.now()
-    await srcnn.predict4(
+    await srcnn.predictSplit(
       this.model,
       'inputCanvas',
       'outputCanvas',
       imageWidth,
       imageHeight,
-      scale
+      4,
+      4,
+      scale,
+      6
     )
     const tend = performance.now()
     this.setState({
