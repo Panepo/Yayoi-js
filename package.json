@@ -27,9 +27,7 @@
     ]
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^0.12.3",
-    "@tensorflow/tfjs-converter": "^0.5.4",
-    "@tensorflow/tfjs-core": "^0.12.7",
+    "@tensorflow/tfjs": "^0.13.0",
     "babel-polyfill": "^6.26.0",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
