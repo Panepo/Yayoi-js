@@ -89,7 +89,7 @@ export const mergeResult = (canvasi, canvaso, data, width, height, padding) => {
   }
   ctxo.putImageData(ctxiImg, 0, 0)
 }
-
+/*
 export const predictMerge = (data, width, height, swidth, sheight, splitW) => {
   let output = []
   for (let i = 0; i < height; i += 1) {
@@ -98,5 +98,25 @@ export const predictMerge = (data, width, height, swidth, sheight, splitW) => {
       output.push(data[idx][(i % sheight) * swidth + (j % swidth)])
     }
   }
+  return output
+} */
+
+export const predictMerge = (data, width, height, swidth, sheight, splitW) => {
+  // console.log('height:' + height + ' width:' + width)
+  // console.log('sheight:' + sheight + ' swidth:' + swidth)
+  let output = []
+  for (let j = 0; j < height; j += 1) {
+    for (let i = 0; i < width; i += 1) {
+      let idx = Math.floor(i / swidth) + splitW * Math.floor(j / sheight)
+      if (Math.floor(i / swidth) === splitW - 1) {
+        let idy = (i % swidth) + (width - (splitW - 1) * swidth) * (j % sheight)
+        output.push(data[idx][idy])
+      } else {
+        // console.log('idx:' + idx + ' index:' + ((i % swidth) + swidth * (j % sheight)))
+        output.push(data[idx][(i % swidth) + swidth * (j % sheight)])
+      }
+    }
+  }
+  // console.log(output)
   return output
 }

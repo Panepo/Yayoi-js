@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs'
 import * as util from './Srcnn.util'
+import * as calc from './Srcnn.calc'
 
 export const modelPath = './model/model.json'
 
@@ -8,7 +9,7 @@ export const predict = (model, inputId, outputId, width, height, scale) => {
   const canvaso = document.getElementById(outputId)
 
   const widthO = width * scale
-  const heightO = width * scale
+  const heightO = height * scale
 
   // temp canvas declaration
   let canvast1 = document.createElement('canvas')
@@ -69,27 +70,20 @@ export const predictSplit = async (
   util.rgb2ycbcr(canvas, canvast1, width, height)
   util.canvasResize(canvast1, canvast2, width, height, scale)
 
-  const widthS = Math.floor((widthO - padding * 2) / splitW)
-  const heightS = Math.floor((heightO - padding * 2) / splitH)
+  let widthS = calc.calcSplit(widthO, splitW, padding)
+  let heightS = calc.calcSplit(heightO, splitH, padding)
+
   let canvasSplit = document.createElement('canvas')
   const ctxSplit = canvasSplit.getContext('2d')
 
   const dataPredict = []
   for (let i = 0; i < splitH; i += 1) {
     for (let j = 0; j < splitW; j += 1) {
-      let sx = widthS * j
-      let sy = heightS * i
-      let swidth, sheight
-      if (i === splitH - 1) {
-        sheight = heightO - heightS * i
-      } else {
-        sheight = heightS + padding * 2
-      }
-      if (j === splitW - 1) {
-        swidth = widthO - widthS * j
-      } else {
-        swidth = widthS + padding * 2
-      }
+      let sx = calc.calcSplitStart(widthS, j)
+      let sy = calc.calcSplitStart(heightS, i)
+      let swidth = calc.calcSplitLength(widthO, widthS, splitW, j, padding)
+      let sheight = calc.calcSplitLength(heightO, heightS, splitH, i, padding)
+
       canvasSplit.width = swidth
       canvasSplit.height = sheight
       ctxSplit.drawImage(

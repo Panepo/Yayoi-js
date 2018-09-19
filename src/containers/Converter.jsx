@@ -18,8 +18,11 @@ class Converter extends Component {
       imageWidth: 200,
       imageHeight: 200,
       imageSize: 1000000,
+      imageSplitW: 4,
+      imageSplitH: 4,
       processTime: '0',
-      scale: 2
+      scale: 2,
+      modelPadding: 6
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
@@ -68,14 +71,13 @@ class Converter extends Component {
       const ctx = canvas.getContext('2d')
 
       image.onload = () => {
-        ctx.clearRect(0, 0, this.state.imageWidth, this.state.imageHeight)
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          this.state.imageWidth,
-          this.state.imageHeight
-        )
+        canvas.width = image.naturalWidth
+        canvas.height = image.naturalHeight
+        ctx.drawImage(image, 0, 0)
+        this.setState({
+          imageWidth: canvas.width,
+          imageHeight: canvas.height
+        })
       }
     } else {
       this.setState({
@@ -94,7 +96,14 @@ class Converter extends Component {
   }
 
   handlePredict = async () => {
-    const { imageWidth, imageHeight, scale } = this.state
+    const {
+      imageWidth,
+      imageHeight,
+      scale,
+      imageSplitW,
+      imageSplitH,
+      modelPadding
+    } = this.state
     const tstart = performance.now()
     await srcnn.predictSplit(
       this.model,
@@ -102,11 +111,19 @@ class Converter extends Component {
       'outputCanvas',
       imageWidth,
       imageHeight,
-      4,
-      4,
+      imageSplitW,
+      imageSplitH,
       scale,
-      6
+      modelPadding
     )
+    /* await srcnn.predict(
+      this.model,
+      'inputCanvas',
+      'outputCanvas',
+      imageWidth,
+      imageHeight,
+      scale
+    ) */
     const tend = performance.now()
     this.setState({
       processTime: Math.floor(tend - tstart).toString() + ' ms'
@@ -171,15 +188,11 @@ class Converter extends Component {
           className="converter_hidden"
           id="inputImage"
           src={this.state.imageFile[0]}
-          width={this.state.imageWidth}
-          height={this.state.imageHeight}
+          width="100%"
+          height="100%"
           alt={this.state.text}
         />
-        <canvas
-          id="inputCanvas"
-          width={this.state.imageWidth}
-          height={this.state.imageHeight}
-        />
+        <canvas id="inputCanvas" />
       </div>
     )
   }
