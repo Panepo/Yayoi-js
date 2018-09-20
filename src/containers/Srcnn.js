@@ -33,6 +33,16 @@ export const predict = (
     return Array.from(tensorVal.dataSync())
   })
 
+  dataPredict.map(data => {
+    if (data > 255) {
+      return 255
+    } else if (data < 0) {
+      return 0
+    } else {
+      return data
+    }
+  })
+
   let canvast3 = document.createElement('canvas')
   util.mergeResult(canvast2, canvast3, dataPredict, widthO, heightO, padding)
   util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)

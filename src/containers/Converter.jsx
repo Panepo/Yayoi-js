@@ -22,8 +22,8 @@ class Converter extends Component {
       scale: 2,
       modelPadding: 6,
       PredictSplit: false,
-      imageSplitW: 4,
-      imageSplitH: 4
+      imageSplitW: 5,
+      imageSplitH: 5
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
