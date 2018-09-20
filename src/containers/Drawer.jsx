@@ -9,8 +9,7 @@ export default class Drawer extends Component {
         <a
           className="mdl-navigation__link mdl-typography--subhead"
           key={'drawer-link' + i.toString()}
-          href={data.link}
-        >
+          href={data.link}>
           {data.text}
         </a>
       )

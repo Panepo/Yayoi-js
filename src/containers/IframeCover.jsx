@@ -24,8 +24,7 @@ class IframeCover extends Component {
         <div className="iframe_cover">
           <button
             className="iframe_close mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect"
-            onClick={this.handleSwitch}
-          >
+            onClick={this.handleSwitch}>
             <div className="material-icons">clear</div>
           </button>
           <div className="iframe_content mdl-color--black">

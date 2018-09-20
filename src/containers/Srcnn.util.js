@@ -1,6 +1,8 @@
 export const rgb2ycbcr = (canvasi, canvaso, width, height) => {
   const ctxi = canvasi.getContext('2d')
   const ctxo = canvaso.getContext('2d')
+  canvaso.width = width
+  canvaso.height = height
   const ctxiImg = ctxi.getImageData(0, 0, width, height)
   let ctxiData = ctxiImg.data
 
@@ -28,6 +30,8 @@ export const rgb2ycbcr = (canvasi, canvaso, width, height) => {
 export const ycbcr2rgb = (canvasi, canvaso, width, height) => {
   const ctxi = canvasi.getContext('2d')
   const ctxo = canvaso.getContext('2d')
+  canvaso.width = width
+  canvaso.height = height
   const ctxiImg = ctxi.getImageData(0, 0, width, height)
   let ctxiData = ctxiImg.data
 
@@ -51,6 +55,8 @@ export const ycbcr2rgb = (canvasi, canvaso, width, height) => {
 
 export const canvasResize = (canvasi, canvaso, width, height, scale) => {
   const ctxo = canvaso.getContext('2d')
+  canvaso.width = width * scale
+  canvaso.height = height * scale
   ctxo.drawImage(
     canvasi,
     0,
@@ -64,9 +70,26 @@ export const canvasResize = (canvasi, canvaso, width, height, scale) => {
   )
 }
 
+export const canvasRotate = (canvasi, canvaso, width, height, angle) => {
+  const ctxo = canvaso.getContext('2d')
+  if (width > height) {
+    canvaso.width = width
+    canvaso.height = height
+  } else {
+    canvaso.width = height
+    canvaso.height = height
+  }
+  ctxo.drawImage(canvasi, 0, 0, width, height)
+  ctxo.rotate((angle * Math.PI) / 180)
+  canvaso.width = height
+  canvaso.height = width
+}
+
 export const mergeResult = (canvasi, canvaso, data, width, height, padding) => {
   const ctxi = canvasi.getContext('2d')
   const ctxo = canvaso.getContext('2d')
+  canvaso.width = width
+  canvaso.height = height
   const ctxiImg = ctxi.getImageData(0, 0, width, height)
   let ctxiData = ctxiImg.data
   let j = 0

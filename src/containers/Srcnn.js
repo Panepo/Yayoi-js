@@ -4,37 +4,37 @@ import * as calc from './Srcnn.calc'
 
 export const modelPath = './model/model.json'
 
-export const predict = (model, inputId, outputId, width, height, scale) => {
+export const predict = (
+  model,
+  inputId,
+  outputId,
+  width,
+  height,
+  scale,
+  padding
+) => {
   const canvas = document.getElementById(inputId)
   const canvaso = document.getElementById(outputId)
 
+  let canvast1 = document.createElement('canvas')
+  util.rgb2ycbcr(canvas, canvast1, width, height)
+
+  let canvast2 = document.createElement('canvas')
+  util.canvasResize(canvast1, canvast2, width, height, scale)
   const widthO = width * scale
   const heightO = height * scale
-
-  // temp canvas declaration
-  let canvast1 = document.createElement('canvas')
-  canvast1.width = widthO
-  canvast1.height = heightO
-  let canvast2 = document.createElement('canvas')
-  canvast2.width = widthO
-  canvast2.height = heightO
-  let canvast3 = document.createElement('canvas')
-  canvast3.width = widthO
-  canvast3.height = heightO
-
-  util.canvasResize(canvas, canvast1, width, height, scale)
-  util.rgb2ycbcr(canvast1, canvast2, widthO, heightO)
 
   const dataPredict = tf.tidy(() => {
     const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
     const tensorNor = tensorInp.div(tf.scalar(255))
-    const tensorBat = tensorNor.reshape([1, widthO, heightO, 1])
+    const tensorBat = tensorNor.reshape([1, heightO, widthO, 1])
     const tensorOut = model.predict(tensorBat, { batchSize: 1 })
     const tensorVal = tensorOut.mul(tf.scalar(255))
     return Array.from(tensorVal.dataSync())
   })
 
-  util.mergeResult(canvast2, canvast3, dataPredict, widthO, heightO, 6)
+  let canvast3 = document.createElement('canvas')
+  util.mergeResult(canvast2, canvast3, dataPredict, widthO, heightO, padding)
   util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)
 
   // remove temp canvas
@@ -57,18 +57,13 @@ export const predictSplit = async (
   const canvas = document.getElementById(inputId)
   const canvaso = document.getElementById(outputId)
 
+  let canvast1 = document.createElement('canvas')
+  util.rgb2ycbcr(canvas, canvast1, width, height)
+
+  let canvast2 = document.createElement('canvas')
+  util.canvasResize(canvast1, canvast2, width, height, scale)
   const widthO = width * scale
   const heightO = height * scale
-
-  let canvast1 = document.createElement('canvas')
-  canvast1.width = width
-  canvast1.height = height
-  let canvast2 = document.createElement('canvas')
-  canvast2.width = widthO
-  canvast2.height = heightO
-
-  util.rgb2ycbcr(canvas, canvast1, width, height)
-  util.canvasResize(canvast1, canvast2, width, height, scale)
 
   let widthS = calc.calcSplit(widthO, splitW, padding)
   let heightS = calc.calcSplit(heightO, splitH, padding)
@@ -101,7 +96,7 @@ export const predictSplit = async (
         await tf.tidy(() => {
           const tensorInp = tf.fromPixels(canvasSplit, 1).toFloat()
           const tensorNor = tensorInp.div(tf.scalar(255))
-          const tensorBat = tensorNor.reshape([1, swidth, sheight, 1])
+          const tensorBat = tensorNor.reshape([1, sheight, swidth, 1])
           const tensorOut = model.predict(tensorBat, { batchSize: 1 })
           const tensorVal = tensorOut.mul(tf.scalar(255))
           return Array.from(tensorVal.dataSync())
@@ -119,9 +114,6 @@ export const predictSplit = async (
   )
 
   let canvast3 = document.createElement('canvas')
-  canvast3.width = widthO
-  canvast3.height = heightO
-
   util.mergeResult(canvast2, canvast3, dataOut, widthO, heightO, padding)
   util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)
 

@@ -35,8 +35,7 @@ export default class WebCamPlayer extends Component {
           <div>
             <button
               className="imageUploader_Button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-              onClick={this.handleControl}
-            >
+              onClick={this.handleControl}>
               Webcam Stop
             </button>
           </div>
@@ -58,8 +57,7 @@ export default class WebCamPlayer extends Component {
         <div key={modelId}>
           <button
             className="imageUploader_Button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-            onClick={this.handleControl}
-          >
+            onClick={this.handleControl}>
             Webcam Start
           </button>
         </div>

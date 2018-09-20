@@ -34,3 +34,7 @@
   margin-bottom: 40px;
   z-index: 900;
 }
+
+.converter-text-box {
+  width: 100px;
+}

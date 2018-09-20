@@ -18,16 +18,18 @@ class Converter extends Component {
       imageWidth: 200,
       imageHeight: 200,
       imageSize: 1000000,
-      imageSplitW: 4,
-      imageSplitH: 4,
       processTime: '0',
       scale: 2,
-      modelPadding: 6
+      modelPadding: 6,
+      PredictSplit: false,
+      imageSplitW: 4,
+      imageSplitH: 4
     }
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
     this.handlePredict = this.handlePredict.bind(this)
     this.handleIframe = this.handleIframe.bind(this)
+    this.handleSplit = this.handleSplit.bind(this)
   }
 
   // ================================================================================
@@ -102,28 +104,33 @@ class Converter extends Component {
       scale,
       imageSplitW,
       imageSplitH,
+      PredictSplit,
       modelPadding
     } = this.state
     const tstart = performance.now()
-    await srcnn.predictSplit(
-      this.model,
-      'inputCanvas',
-      'outputCanvas',
-      imageWidth,
-      imageHeight,
-      imageSplitW,
-      imageSplitH,
-      scale,
-      modelPadding
-    )
-    /* await srcnn.predict(
-      this.model,
-      'inputCanvas',
-      'outputCanvas',
-      imageWidth,
-      imageHeight,
-      scale
-    ) */
+    if (PredictSplit) {
+      await srcnn.predictSplit(
+        this.model,
+        'inputCanvas',
+        'outputCanvas',
+        imageWidth,
+        imageHeight,
+        imageSplitW,
+        imageSplitH,
+        scale,
+        modelPadding
+      )
+    } else {
+      await srcnn.predict(
+        this.model,
+        'inputCanvas',
+        'outputCanvas',
+        imageWidth,
+        imageHeight,
+        scale,
+        modelPadding
+      )
+    }
     const tend = performance.now()
     this.setState({
       processTime: Math.floor(tend - tstart).toString() + ' ms'
@@ -132,6 +139,18 @@ class Converter extends Component {
 
   handleIframe = () => {
     this.props.iframeSwitch(true)
+  }
+
+  handleSplit = () => {
+    if (this.state.PredictSplit) {
+      this.setState({
+        PredictSplit: false
+      })
+    } else {
+      this.setState({
+        PredictSplit: true
+      })
+    }
   }
 
   // ================================================================================
@@ -163,6 +182,28 @@ class Converter extends Component {
       }
     }
 
+    const renderPredictSplit = () => {
+      if (this.state.imageFile.length > 0) {
+        if (this.state.PredictSplit) {
+          return (
+            <button
+              className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
+              onClick={this.handleSplit}>
+              Split Predict
+            </button>
+          )
+        } else {
+          return (
+            <button
+              className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--accent"
+              onClick={this.handleSplit}>
+              Orig Predict
+            </button>
+          )
+        }
+      }
+    }
+
     return (
       <div>
         <label className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary">
@@ -177,6 +218,7 @@ class Converter extends Component {
         </label>
         {renderClear()}
         {renderTrain()}
+        {renderPredictSplit()}
       </div>
     )
   }
@@ -202,7 +244,7 @@ class Converter extends Component {
       return (
         <div>
           <div className="mdl-card__actions mdl-card--border sensor_borderline" />
-          <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <div className="converter-text-box mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input
               className="mdl-textfield__input"
               type="text"
@@ -212,6 +254,30 @@ class Converter extends Component {
             />
             <label className="mdl-textfield__label" htmlFor="processTime_text">
               Process Time
+            </label>
+          </div>
+          <div className="converter-text-box mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input
+              className="mdl-textfield__input"
+              type="text"
+              id="imageWidth_text"
+              readOnly
+              value={this.state.imageWidth}
+            />
+            <label className="mdl-textfield__label" htmlFor="imageWidth_text">
+              Width
+            </label>
+          </div>
+          <div className="converter-text-box mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input
+              className="mdl-textfield__input"
+              type="text"
+              id="imageHeight_text"
+              readOnly
+              value={this.state.imageHeight}
+            />
+            <label className="mdl-textfield__label" htmlFor="imageHeight_text">
+              Height
             </label>
           </div>
         </div>

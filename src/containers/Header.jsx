@@ -10,8 +10,7 @@ export default class Header extends Component {
         <a
           className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
           key={'header-link' + i.toString()}
-          href={data.link}
-        >
+          href={data.link}>
           {data.text}
         </a>
       )
