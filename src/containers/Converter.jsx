@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { iframeSwitch } from '../actions'
 import * as tf from '@tensorflow/tfjs'
 import * as srcnn from './Srcnn'
+import * as util from './Srcnn.util'
 import MdlBusyBar from '../components/MdlBusyBar'
 import './Converter.css'
 
@@ -73,13 +74,40 @@ class Converter extends Component {
       const ctx = canvas.getContext('2d')
 
       image.onload = () => {
-        canvas.width = image.naturalWidth
-        canvas.height = image.naturalHeight
-        ctx.drawImage(image, 0, 0)
-        this.setState({
-          imageWidth: canvas.width,
-          imageHeight: canvas.height
-        })
+        if (this.state.PredictSplit) {
+          canvas.width = image.naturalWidth
+          canvas.height = image.naturalHeight
+          ctx.drawImage(image, 0, 0)
+          this.setState({
+            imageWidth: canvas.width,
+            imageHeight: canvas.height,
+            imageSplitW: Math.ceil(canvas.width / 100),
+            imageSplitH: Math.ceil(canvas.height / 100)
+          })
+        } else {
+          let [widthM, heightM] = util.limitWidthHeight(
+            image.naturalWidth,
+            image.naturalHeight,
+            100
+          )
+          canvas.width = widthM
+          canvas.height = heightM
+          ctx.drawImage(
+            image,
+            0,
+            0,
+            image.naturalWidth,
+            image.naturalHeight,
+            0,
+            0,
+            widthM,
+            heightM
+          )
+          this.setState({
+            imageWidth: canvas.width,
+            imageHeight: canvas.height
+          })
+        }
       }
     } else {
       this.setState({
