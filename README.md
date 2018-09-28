@@ -24,15 +24,11 @@ Here are two result. From left to right, the first column is the input image, th
 
 Butterfly
 
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_GT.bmp" alt="Butterfly" height="200" width="200">
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_opencv.png" alt="Butterfly" height="200" width="200">
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_srcnn.png" alt="Butterfly" height="200" width="200">
+<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_GT.bmp" alt="Butterfly" height="100" width="100"><img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_opencv.png" alt="Butterfly" height="200" width="200"><img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_srcnn.png" alt="Butterfly" height="200" width="200">
 
 Shaman
 
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic.png" alt="Shaman" height="200" width="288">
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_opencv.png" alt="Shaman" height="200" width="288">
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_srcnn.png" alt="Shaman" height="200" width="288">
+<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic.png" alt="Shaman" height="144" width="100"><img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_opencv.png" alt="Shaman" height="288" width="200"><img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_srcnn.png" alt="Shaman" height="288" width="200">
 
 
 ## Install
