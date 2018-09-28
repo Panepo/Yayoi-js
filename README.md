@@ -13,19 +13,37 @@ React implementation of image super-resolution using deep convolutional neural n
 
 First visit this [page](https://panepo.github.io/Yayoi-js/) and follow these steps:
 
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/usage.png)
+
 1. Upload the images
 2. Click enlarge
 
+## Results
+
+Original butterfly image:
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly.bmp)
+Bicubic interpolated image:
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_opencv.png)
+Super-resolved image:
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/butterfly_srcnn.png)
+
+Original comic image:
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/comic.png)
+Bicubic interpolated image:
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_opencv.png)
+Super-resolved image:
+![usage](https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_srcnn.png)
 
 ## Install
 
-Nothing. Only a webcam and a tensorflow.js supported browser are needed.
+Nothing. Only a tensorflow.js supported browser is needed.
 
 ## Library used
 
 * [Tensorflow.js](https://js.tensorflow.org/)
 * [React](https://facebook.github.io/react/)
 * [Redux](http://redux.js.org/)
+* [Create React App ](https://github.com/facebook/create-react-app)
 * [Material Design Lite](https://getmdl.io/)
 * [FlipMove](https://github.com/joshwcomeau/react-flip-move)
 
