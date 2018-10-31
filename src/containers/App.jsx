@@ -1,22 +1,17 @@
-import React, { Component } from 'react'
+import React from 'react'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import Header from './Header'
 import Drawer from './Drawer'
 import Content from './Content'
 import Footer from './Footer'
-import './App.css'
 
-export default class App extends Component {
+export default class App extends React.Component {
   render() {
     return (
-      <div>
-        <div className="layout-app mdl-layout mdl-js-layout mdl-layout--fixed-header">
-          <Header />
-          <Drawer />
-          <div className="layout-ribbon" />
-          <Content />
-          <Footer />
-        </div>
-      </div>
+      <React.Fragment>
+        <CssBaseline />
+        <Header />
+      </React.Fragment>
     )
   }
 }

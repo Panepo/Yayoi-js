@@ -1,35 +1,69 @@
-import React, { Component } from 'react'
-import IframeCover from './IframeCover'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import withRoot from '../withRoot'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import MenuIcon from '@material-ui/icons/Menu'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import { listLink } from '../constants/ConstLink'
-import './Header.css'
 
-export default class Header extends Component {
+const styles = theme => ({
+  root: {},
+  appBar: {
+    position: 'relative'
+  },
+  button: {
+    margin: theme.spacing.unit
+  },
+  grow: {
+    flexGrow: 1
+  },
+  icon: {
+    marginRight: theme.spacing.unit * 2
+  }
+})
+
+class Header extends React.Component {
   renderLink = () => {
+    const { classes } = this.props
+
     return listLink.reduce((output, data, i) => {
       output.push(
-        <a
-          className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"
-          key={'header-link' + i.toString()}
-          href={data.link}>
+        <Button color="primary" className={classes.button} href={data.link}>
           {data.text}
-        </a>
+        </Button>
       )
       return output
     }, [])
   }
 
   render() {
+    const { classes } = this.props
+
     return (
-      <header className="layout-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
-        <IframeCover />
-        <div className="mdl-layout__header-row mdl-shadow--4dp">
-          <span className="mdl-layout-title mdl-typography--title">
-            <b>Yayoi</b>
-          </span>
-          <div className="mdl-layout-spacer" />
-          <nav className="mdl-navigation">{this.renderLink()}</nav>
-        </div>
-      </header>
+      <div className={classes.root}>
+        <AppBar position="static" color="inherit" className={classes.appBar}>
+          <Toolbar>
+            <MenuIcon className={classes.icon} color="primary" />
+            <Typography
+              variant="h6"
+              color="inherit"
+              className={classes.grow}
+              noWrap>
+              Yayoi
+            </Typography>
+            {this.renderLink()}
+          </Toolbar>
+        </AppBar>
+      </div>
     )
   }
 }
+
+Header.propTypes = {
+  classes: PropTypes.object.isRequired
+}
+
+export default withRoot(withStyles(styles)(Header))
