@@ -22,7 +22,7 @@ class Converter extends Component {
       processTime: '0',
       scale: 2,
       modelPadding: 6,
-      PredictSplit: false,
+      PredictSplit: true,
       imageSplitW: 5,
       imageSplitH: 5
     }
@@ -81,8 +81,8 @@ class Converter extends Component {
           this.setState({
             imageWidth: canvas.width,
             imageHeight: canvas.height,
-            imageSplitW: Math.ceil(canvas.width / 100),
-            imageSplitH: Math.ceil(canvas.height / 100)
+            imageSplitW: Math.ceil(canvas.width / 75),
+            imageSplitH: Math.ceil(canvas.height / 75)
           })
         } else {
           let [widthM, heightM] = util.limitWidthHeight(
