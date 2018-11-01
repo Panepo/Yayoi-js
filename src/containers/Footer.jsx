@@ -1,83 +1,37 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogActions from '@material-ui/core/DialogActions'
-import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import withRoot from '../withRoot'
 
 const styles = theme => ({
   root: {
-    textAlign: 'center',
-    paddingTop: theme.spacing.unit * 20
+    background: '#424242',
+    height: '60px'
   },
-  button: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    color: 'white'
+  text: {
+    color: '#BDBDBD',
+    fontSize: '13px',
+    paddingLeft: '40px',
+    paddingTop: '20px'
   }
 })
 
-class Index extends React.Component {
-  state = {
-    open: false
-  }
-
-  handleClose = () => {
-    this.setState({
-      open: false
-    })
-  }
-
-  handleClick = () => {
-    this.setState({
-      open: true
-    })
-  }
-
+class Footer extends React.Component {
   render() {
     const { classes } = this.props
-    const { open } = this.state
 
     return (
-      <div className={classes.root}>
-        <Dialog open={open} onClose={this.handleClose}>
-          <DialogTitle>Super Secret Password</DialogTitle>
-          <DialogContent>
-            <DialogContentText>1-2-3-4-5</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleClose}>
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Typography variant="h4" gutterBottom>
-          Material-UI
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          example project
-        </Typography>
-        <Button
-          className={classes.button}
-          variant="contained"
-          color="primary"
-          onClick={this.handleClick}>
-          Super Secret Password
-        </Button>
-      </div>
+      <footer className={classes.root}>
+        <div className={classes.text}>
+          Copyright &copy; Panepo@Github 2018 All Rights Reserved.
+        </div>
+      </footer>
     )
   }
 }
 
-Index.propTypes = {
+Footer.propTypes = {
   classes: PropTypes.object.isRequired
 }
 
-export default withRoot(withStyles(styles)(Index))
+export default withRoot(withStyles(styles)(Footer))

@@ -36,6 +36,7 @@ const styles = theme => ({
     flexGrow: 1
   },
   menuButton: {
+    color: '#3333ff',
     marginLeft: -12,
     marginRight: 20
   }
@@ -83,7 +84,7 @@ class Header extends React.Component {
     )
 
     return (
-      <div className={classes.root}>
+      <header className={classes.root}>
         <AppBar position="static" color="inherit" className={classes.appBar}>
           <Drawer
             className={classes.drawer}
@@ -110,7 +111,7 @@ class Header extends React.Component {
               color="inherit"
               aria-label="Menu"
               onClick={this.toggleDrawer('drawer', true)}>
-              <MenuIcon color="primary" />
+              <MenuIcon />
             </IconButton>
             <Typography
               variant="h6"
@@ -122,7 +123,7 @@ class Header extends React.Component {
             {renderLink}
           </Toolbar>
         </AppBar>
-      </div>
+      </header>
     )
   }
 }
