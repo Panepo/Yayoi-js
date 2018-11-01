@@ -1,7 +1,6 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Header from './Header'
-import Drawer from './Drawer'
 import Content from './Content'
 import Footer from './Footer'
 
