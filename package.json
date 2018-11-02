@@ -1,6 +1,6 @@
 {
   "name": "yayoi-js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Image super-resolution using deep convolutional neural network (CNN)",
   "private": true,
   "author": "Panepo <panepo@github.io>",
@@ -34,10 +34,8 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-flip-move": "^3.0.2",
     "react-redux": "^5.0.7",
     "react-scripts": "1.1.4",
-    "react-webcam": "^1.0.1",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",

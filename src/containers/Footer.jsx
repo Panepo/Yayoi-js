@@ -6,7 +6,10 @@ import withRoot from '../withRoot'
 const styles = theme => ({
   root: {
     background: '#424242',
-    height: '60px'
+    height: '60px',
+    width: '100%',
+    position: 'realtive',
+    bottom: 0
   },
   text: {
     color: '#BDBDBD',

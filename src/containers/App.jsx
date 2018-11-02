@@ -3,7 +3,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Header from './Header'
 import Ribbon from './Ribbon'
 import Content from './Content'
-import Footer from './Footer'
+// import Footer from './Footer'
 
 export default class App extends React.Component {
   render() {
@@ -13,7 +13,6 @@ export default class App extends React.Component {
         <Header />
         <Ribbon />
         <Content />
-        <Footer />
       </React.Fragment>
     )
   }

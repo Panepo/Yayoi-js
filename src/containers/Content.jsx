@@ -3,30 +3,38 @@ import PropTypes from 'prop-types'
 import * as tf from '@tensorflow/tfjs'
 import * as srcnn from './Srcnn'
 import * as util from './Srcnn.util'
-
+import MucProgress from '../componments/MucProgress'
+import MucText from '../componments/MucText'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+import Divider from '@material-ui/core/Divider'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import withRoot from '../withRoot'
 
 const styles = theme => ({
   root: {
     marginTop: '-55vh',
-    flexShrink: 0,
-    maxWidth: '1600px',
-    width: 'calc(100% - 16px)',
-    margin: 0
+    marginBottom: '60px',
+    flexShrink: 0
   },
   grid: {
-    flexGrow: 1
+    flexGrow: 1,
+    width: '100%'
   },
   paper: {
     borderRadius: '2px',
     paddingTop: '80px',
-    paddingBottom: '56px',
-    marginBottom: '80px'
+    paddingBottom: '80px',
+    paddingLeft: '56px',
+    paddingRight: '56px'
+  },
+  border: {
+    marginTop: '10px',
+    marginBottom: '10px'
+  },
+  hidden: {
+    display: 'none'
   }
 })
 
@@ -52,16 +60,6 @@ class Content extends React.Component {
     this.handleClear = this.handleClear.bind(this)
     this.handlePredict = this.handlePredict.bind(this)
     this.handleSplit = this.handleSplit.bind(this)
-  }
-
-  // ================================================================================
-  // React lifecycle functions
-  // ================================================================================
-
-  componentDidMount = async () => {
-    this.model = await tf.loadModel(srcnn.modelPath)
-    await this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
-    this.setState({ isLoading: false })
   }
 
   // ================================================================================
@@ -208,9 +206,114 @@ class Content extends React.Component {
     }
   }
 
+  // ================================================================================
+  // React render functions
+  // ================================================================================
+
+  renderButton = () => {
+    const { classes } = this.props
+    const renderClear = () => {
+      if (this.state.imageFile.length > 0) {
+        return (
+          <Button color="primary" onClick={this.handleClear}>
+            Clear
+          </Button>
+        )
+      }
+    }
+
+    const renderEnlarge = () => {
+      if (this.state.imageFile.length > 0) {
+        return (
+          <Button color="primary" onClick={this.handlePredict}>
+            Enlarge
+          </Button>
+        )
+      }
+    }
+
+    return (
+      <div>
+        <Button color="primary" component="label">
+          Select Image
+          <input
+            className={classes.hidden}
+            type="file"
+            accept="image/*"
+            onChange={this.handleUpload}
+            required
+          />
+        </Button>
+        {renderClear()}
+        {renderEnlarge()}
+      </div>
+    )
+  }
+
+  renderImage = () => {
+    return (
+      <div>
+        <img
+          className={this.props.classes.hidden}
+          id="inputImage"
+          src={this.state.imageFile[0]}
+          width="100%"
+          height="100%"
+          alt={this.state.text}
+        />
+        <Grid container justify="center" alignItems="center">
+          <canvas className={this.props.classes.canvas} id="inputCanvas" />
+        </Grid>
+      </div>
+    )
+  }
+
+  renderProceeTime = () => {
+    const { classes } = this.props
+    if (this.state.imageFile.length > 0 && this.state.isBusy === false) {
+      return (
+        <div>
+          <Divider className={classes.border} />
+          <MucText
+            modelId="text-input-time"
+            modelLabel="Process Time"
+            modelValue={this.state.processTime}
+          />
+          <MucText
+            modelId="text-input-width"
+            modelLabel="Width"
+            modelValue={this.state.imageWidth}
+          />
+          <MucText
+            modelId="text-input-height"
+            modelLabel="Height"
+            modelValue={this.state.imageHeight}
+          />
+        </div>
+      )
+    }
+  }
+
+  renderOutput = () => {
+    const { classes } = this.props
+    const { imageWidth, imageHeight, scale } = this.state
+    if (this.state.imageFile.length > 0) {
+      return (
+        <Paper className={classes.paper}>
+          <Grid container justify="center" alignItems="center">
+            <canvas
+              id="outputCanvas"
+              width={imageWidth * scale}
+              height={imageHeight * scale}
+            />
+          </Grid>
+        </Paper>
+      )
+    }
+  }
+
   render() {
     const { classes } = this.props
-
     if (this.state.isLoading) {
       return (
         <main className={classes.root}>
@@ -218,9 +321,11 @@ class Content extends React.Component {
             container
             className={classes.grid}
             justify="center"
-            spacing={12}>
-            <Grid item xs={12}>
-              <Paper className={classes.main}>FQ</Paper>
+            spacing={16}>
+            <Grid item xs={4}>
+              <Paper className={classes.paper}>
+                <MucProgress modelText={'Loading...'} />
+              </Paper>
             </Grid>
           </Grid>
         </main>
@@ -232,9 +337,22 @@ class Content extends React.Component {
             container
             className={classes.grid}
             justify="center"
-            spacing={12}>
-            <Grid item xs={12}>
-              <Paper className={classes.main}>FQQ</Paper>
+            spacing={16}>
+            <Grid item xs={4}>
+              <Paper className={classes.paper}>
+                {this.renderButton()}
+                <Divider className={classes.border} />
+                {this.renderImage()}
+                {this.renderProceeTime()}
+                <MucProgress
+                  modelText={'Processing...'}
+                  modelSwitch={this.state.isBusy}
+                  modelBorderUp
+                />
+              </Paper>
+            </Grid>
+            <Grid item xs={6}>
+              {this.renderOutput()}
             </Grid>
           </Grid>
         </main>
