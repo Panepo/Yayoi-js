@@ -16,7 +16,7 @@ const styles = theme => ({
   root: {
     marginTop: '-55vh',
     marginBottom: '60px',
-    flexShrink: 0
+    flex: 1
   },
   grid: {
     flexGrow: 1,

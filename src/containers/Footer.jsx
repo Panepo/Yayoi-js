@@ -7,9 +7,7 @@ const styles = theme => ({
   root: {
     background: '#424242',
     height: '60px',
-    width: '100%',
-    position: 'realtive',
-    bottom: 0
+    width: '100%'
   },
   text: {
     color: '#BDBDBD',
