@@ -58,7 +58,11 @@ class Header extends React.Component {
 
     const renderLink = listLink.reduce((output, data, i) => {
       output.push(
-        <Button color="primary" className={classes.button} href={data.link}>
+        <Button
+          color="primary"
+          className={classes.button}
+          key={data.link}
+          href={data.link}>
           {data.text}
         </Button>
       )

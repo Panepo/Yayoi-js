@@ -41,7 +41,6 @@ const styles = theme => ({
 class Content extends React.Component {
   state = {
     isLoading: true,
-    isBusy: false,
     imageFile: [],
     imageWidth: 200,
     imageHeight: 200,
@@ -268,9 +267,9 @@ class Content extends React.Component {
     )
   }
 
-  renderProceeTime = () => {
+  renderTextBox = () => {
     const { classes } = this.props
-    if (this.state.imageFile.length > 0 && this.state.isBusy === false) {
+    if (this.state.imageFile.length > 0) {
       return (
         <div>
           <Divider className={classes.border} />
@@ -343,12 +342,7 @@ class Content extends React.Component {
                 {this.renderButton()}
                 <Divider className={classes.border} />
                 {this.renderImage()}
-                {this.renderProceeTime()}
-                <MucProgress
-                  modelText={'Processing...'}
-                  modelSwitch={this.state.isBusy}
-                  modelBorderUp
-                />
+                {this.renderTextBox()}
               </Paper>
             </Grid>
             <Grid item xs={6}>

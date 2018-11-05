@@ -1,1 +1,0 @@
-export const IFRMAE_SWITCH = 'IFRMAE_SWITCH'
