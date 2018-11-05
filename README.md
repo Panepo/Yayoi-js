@@ -1,6 +1,6 @@
 # [Yayoi-js](https://panepo.github.io/Yayoi-js/)
 
-[![Build Status](https://travis-ci.org/Panepo/Uzuki.svg?branch=master)](https://travis-ci.org/Panepo/Yayoi-js.svg) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Build Status](https://travis-ci.org/Panepo/Yayoi-js.svg?branch=master)](https://travis-ci.org/Panepo/Yayoi-js.svg) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 React implementation of image super-resolution using deep convolutional neural network (SRCNN)
 
@@ -35,9 +35,9 @@ Shaman
 * [Tensorflow.js](https://js.tensorflow.org/)
 * [React](https://facebook.github.io/react/)
 * [Redux](http://redux.js.org/)
-* [Create React App ](https://github.com/facebook/create-react-app)
+* [Create React App](https://github.com/facebook/create-react-app)
 * [Material Design Lite](https://getmdl.io/)
-* [FlipMove](https://github.com/joshwcomeau/react-flip-move)
+* [Material-UI](https://material-ui.com/)
 
 ## Develop
 

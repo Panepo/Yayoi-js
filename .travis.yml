@@ -6,12 +6,13 @@ before_install:
 install:
 - yarn
 script:
-- git clone --depth 1 --branch gh-pages https://$GH_TOKEN@github.com/Panepo/Yayoi-js build
+- git clone --depth 1 --branch gh-pages https://$GH_TOKEN@github.com/Panepo/Yayoi-js
+  build
 - yarn build
 deploy:
   provider: pages
   skip-cleanup: true
-  github-token: $GH_TOKEN
+  github-token: "$GH_TOKEN"
   keep-history: true
   local-dir: build
   on:
@@ -23,4 +24,4 @@ notifications:
   email: false
 env:
   global:
-    secure: P4Zolgz0ScxX+PZWIVNyP2yKH5NMEE9zSljLg4YuZWOOze6dVnpSsBXVyU60D7pLoOzH5D/uU8SoDwHevOO3TQ+Bl2JB39w1jU56QE13s04F0JJPuqr3mSusvuqf40o2N+Sy9iE2+ryUd2+qAJGhydDQLTdSI2z9rOfkLTH1TumflZILHlIK9EJaQFz81WOeamzgGWi+PfYxrxXRkl/Gt3qlh49Z0fbnI4s8yG0w/ObQU7UcVualGvlW/kaVE8E96nR0vyf2D9poWo1eaBaFdLiIq5ZRfqDrVOOaOOCU2cov9n294xD4V6bvSIhPcMQX5kRHdXD5H+6eW5ufXZYUzuODHAIZXVuhcJ/4M7H5bdevpHJi0lGovVjEUNoPWPzWogtiTrQdaMBOgKoqOvChvLoqp2DqTf4DF6izlZhsP0s30BISS8DXKcY6XKQ2V2wqaEfidl14EXlCxkI3r+YI6IwBbUXo2iU1dLacFv3qOY3IZw+tPdHXpLdaD/XB2QgIl3AnEeTk0BS5mpdtJv1NeF+3TO7w6hYEutSuvctWCAOT6+72AkXgSPUbb5yLnG83oQX4ADlr0kMo/zbigetDWruoez3SRHJfDrwGYtfGl9ZQe1+koJwaI0G5k5GruOcuIrb/oVSeS4H8PauutosFCjfY281it2qRfEx2tsWtPVw=
+  - secure: KwMXY6PRYi+tD0j9ic99Y9Ou+grSo2joZXmMCPo1xgNr5jpgN+Bm8jT9luYLx6/+UtYfdp+/s79OB13c+wUSsi5XVgRWc0UImNKF7WnQ6b2NlJd8SNacoRkhumyc8s942uOr6cHou5l60EvUa2lLb7ujCi382mjhqed1cuEB77nmRl0qAjlxrogPL4smKygMUsUTFjGbsuenZqOpZcCQLj0dLa9n6jav1yJy3seaZuNR3nrWR3BiC85Xx58xzeN5ddowE+y6euiTqGPSl+tbJkTMXVRtm+TPrefdt9doZFyQRADibsq5FSfLl4cJmAJ764zUI68vNT9BzPEdb3FN9VN1tRmMirf4HJv6sbeVxYA/q3akN4MGseIJZ8KAn0Q0iepgeohoCTXN5dk9WOqNG4EQZB8KvsAmfU6B0+vBVx0lFxNlzCnNYRiOxB4JDF0dlEkRn3Nn76zxn3qmCOgyeDu64c+eKa1xKkJDcsX1wgi2JGzmOANbr96rTIbwCAMoJK1JZByWFI/9xDy5yZHB8r26QhwTLNbF60Zqq4eZnEpU9q1oKcu3hvvYVYn8VYrGJZnU8J2UzxPgM1W9MT6spZ0UDpGZUhaDKvEkqsrrmcuWgLNlrmfBgsek3mZBqkfuIJNhIDuZd069Ww5UN+XfkydypMCw1SaHgXExLNO3NsY=
