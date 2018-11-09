@@ -4,6 +4,20 @@
 
 React implementation of image super-resolution using deep convolutional neural network (SRCNN)
 
+## FAQ
+
+### What is this?
+
+This is an implementation of the image super-resolution using deep convolutional neural network (SRCNN) algorithm running purely on the browser using the Tensorflow.js library. Basically, a neural network attempts to "draw" an upscaled picture from the image you uploaded in the factor of 2.
+
+### Is my data safe?
+
+Your data and pictures here never leave your computer! In fact, this is one of the main advantages of running neural networks in your browser. Instead of sending us your data, we send you both the model and the code to run the model. These are then run by your browser.
+
+### How big are the models I'm downloading?
+
+Your browser will download a model around ~300KB in size.
+
 ## Requirements
 
 * Browser (Chrome is perfered)
@@ -29,6 +43,11 @@ Butterfly
 Shaman
 
 <img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic.png" alt="Shaman" height="144" width="100"> <img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_opencv.png" alt="Shaman" height="288" width="200"> <img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/comic_srcnn.png" alt="Shaman" height="288" width="200">
+
+## Reference
+
+* [Image Super-Resolution Using Deep Convolutional Networks](http://arxiv.org/abs/1501.00092)
+* [Waifu2x](https://github.com/nagadomi/waifu2x)
 
 ## Library used
 
