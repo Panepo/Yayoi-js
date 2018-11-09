@@ -37,7 +37,7 @@ class MucText extends React.Component {
           {modelLabel}
         </InputLabel>
         <Input
-          id={modelId}
+          id={modelId + '-value'}
           classes={{
             underline: classes.textUnderline
           }}

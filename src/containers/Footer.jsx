@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import withRoot from '../withRoot'
 
@@ -23,9 +24,9 @@ class Footer extends React.Component {
 
     return (
       <footer className={classes.root}>
-        <div className={classes.text}>
+        <Typography className={classes.text}>
           Copyright &copy; Panepo@Github 2018 All Rights Reserved.
-        </div>
+        </Typography>
       </footer>
     )
   }

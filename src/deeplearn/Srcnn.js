@@ -4,7 +4,7 @@ import * as calc from './Srcnn.calc'
 
 export const modelPath = './model/model.json'
 
-export const predict = (
+export const predict = async (
   model,
   inputId,
   outputId,
@@ -24,7 +24,7 @@ export const predict = (
   const widthO = width * scale
   const heightO = height * scale
 
-  const dataPredict = tf.tidy(() => {
+  const dataPredict = await tf.tidy(() => {
     const tensorInp = tf.fromPixels(canvast2, 1).toFloat()
     const tensorNor = tensorInp.div(tf.scalar(255))
     const tensorBat = tensorNor.reshape([1, heightO, widthO, 1])
@@ -33,7 +33,7 @@ export const predict = (
     return Array.from(tensorVal.dataSync())
   })
 
-  dataPredict.map(data => {
+  await dataPredict.map(data => {
     if (data > 255) {
       return 255
     } else if (data < 0) {
@@ -44,8 +44,15 @@ export const predict = (
   })
 
   let canvast3 = document.createElement('canvas')
-  util.mergeResult(canvast2, canvast3, dataPredict, widthO, heightO, padding)
-  util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)
+  await util.mergeResult(
+    canvast2,
+    canvast3,
+    dataPredict,
+    widthO,
+    heightO,
+    padding
+  )
+  await util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)
 
   // remove temp canvas
   canvast1.remove()
@@ -68,10 +75,10 @@ export const predictSplit = async (
   const canvaso = document.getElementById(outputId)
 
   let canvast1 = document.createElement('canvas')
-  util.rgb2ycbcr(canvas, canvast1, width, height)
+  await util.rgb2ycbcr(canvas, canvast1, width, height)
 
   let canvast2 = document.createElement('canvas')
-  util.canvasResize(canvast1, canvast2, width, height, scale)
+  await util.canvasResize(canvast1, canvast2, width, height, scale)
   const widthO = width * scale
   const heightO = height * scale
 
@@ -124,8 +131,8 @@ export const predictSplit = async (
   )
 
   let canvast3 = document.createElement('canvas')
-  util.mergeResult(canvast2, canvast3, dataOut, widthO, heightO, padding)
-  util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)
+  await util.mergeResult(canvast2, canvast3, dataOut, widthO, heightO, padding)
+  await util.ycbcr2rgb(canvast3, canvaso, widthO, heightO)
 
   // remove temp canvas
   canvast1.remove()

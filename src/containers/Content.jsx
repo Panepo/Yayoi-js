@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import * as tf from '@tensorflow/tfjs'
-import * as srcnn from './Srcnn'
-import * as util from './Srcnn.util'
+import * as srcnn from '../deeplearn/Srcnn'
+import * as util from '../deeplearn/Srcnn.util'
 import MucProgress from '../componments/MucProgress'
 import MucText from '../componments/MucText'
 import Grid from '@material-ui/core/Grid'
@@ -77,7 +77,6 @@ class Content extends React.Component {
 
   handleUpload = event => {
     const data = []
-    const tstart = performance.now()
 
     for (let i = 0; i < event.target.files.length; i += 1) {
       let dataTemp
@@ -90,11 +89,9 @@ class Content extends React.Component {
       }
     }
 
-    const tend = performance.now()
     if (data.length > 0) {
       this.setState({
         imageFile: data,
-        processTime: Math.floor(tend - tstart).toString() + ' ms',
         isSensing: false
       })
       const image = document.getElementById('inputImage')

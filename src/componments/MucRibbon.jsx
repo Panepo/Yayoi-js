@@ -11,15 +11,15 @@ const styles = theme => ({
   }
 })
 
-class Ribbon extends React.Component {
+class MucRibbon extends React.Component {
   render() {
     const { classes } = this.props
     return <div className={classes.root} />
   }
 }
 
-Ribbon.propTypes = {
+MucRibbon.propTypes = {
   classes: PropTypes.object.isRequired
 }
 
-export default withRoot(withStyles(styles)(Ribbon))
+export default withRoot(withStyles(styles)(MucRibbon))

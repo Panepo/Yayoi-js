@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Header from './Header'
-import Ribbon from './Ribbon'
+import MucRibbon from '../componments/MucRibbon'
 import Content from './Content'
 import Footer from './Footer'
 import { withStyles } from '@material-ui/core/styles'
@@ -22,7 +22,7 @@ class App extends React.Component {
       <React.Fragment>
         <div className={classes.root}>
           <Header />
-          <Ribbon />
+          <MucRibbon />
           <Content />
           <Footer />
         </div>
